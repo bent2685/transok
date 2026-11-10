@@ -131,6 +131,22 @@ func dialogIconButton(c *ui.Context, p Palette, iconName string, iconColor ui.Co
 	return b
 }
 
+// dialogGhostButton 是抽屉里带图标的纯文字按钮，样式同无底色的取消键。
+func dialogGhostButton(c *ui.Context, p Palette, iconName string, iconColor ui.Color, label string, onClick func()) ui.Element {
+	b := ui.ButtonBase(c).Height(38).Padding(0, 14).Radius(10).
+		Cursor(ui.CursorPointer).OnClick(onClick)
+	if b.Hovered() {
+		b.Background(p.SurfaceHover)
+	}
+	b.Children(func() {
+		ui.Row(c).Gap(7).AlignItems(ui.Center).Children(func() {
+			ui.Icon(c, icon(iconName)).FontSize(15).TextColor(iconColor)
+			ui.Text(c, label).FontSize(13.5).TextColor(p.Text)
+		})
+	})
+	return b
+}
+
 // primaryDialogButton 是对话框里的主按钮。
 func primaryDialogButton(c *ui.Context, p Palette, label string, onClick func()) ui.Element {
 	b := ui.ButtonBase(c).Height(38).Padding(0, 16).Radius(10).

@@ -26,6 +26,8 @@ type drawerSpec struct {
 	icon        string
 	title       string
 	description string
+	// center 把默认头部改成一列居中，用于短文案的面板（如验证码）。
+	center bool
 	// header 取代默认的图标 + 标题行，用于标题本身可编辑的抽屉。
 	header func()
 	body   func()
@@ -67,6 +69,20 @@ func (a *App) drawer(c *ui.Context, p Palette, open *bool, spec drawerSpec) {
 				spacer(c, 16)
 				if spec.header != nil {
 					spec.header()
+				} else if spec.center {
+					ui.Column(c).Center().Gap(0).Children(func() {
+						tile := ui.Column(c).Size(52, 52).Radius(13).Center().Background(p.Accent)
+						tile.Shadow(0, 6, 18, 0, ui.RGBA(124, 126, 44, 0.45))
+						tile.Children(func() {
+							ui.Icon(c, icon(spec.icon)).FontSize(26).TextColor(p.AccentText)
+						})
+						spacer(c, 14)
+						ui.Text(c, spec.title).FontSize(22).FontWeight(800).LetterSpacing(-0.5)
+						if spec.description != "" {
+							spacer(c, 6)
+							ui.Text(c, spec.description).FontSize(12.5).TextColor(p.Muted)
+						}
+					})
 				} else {
 					ui.Row(c).Gap(12).AlignItems(ui.Center).Children(func() {
 						tile := ui.Column(c).Size(40, 40).Radius(11).Center().Background(p.Accent)

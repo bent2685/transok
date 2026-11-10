@@ -16,10 +16,14 @@ func (a *App) captchaDrawer(c *ui.Context, p Palette) {
 		icon:        "shield-lock",
 		title:       locales.CaptchaTitle(),
 		description: locales.CaptchaDescription(captchaLength),
-		body:        func() { a.otpBoxes(c, p) },
+		center:      true,
+		body: func() {
+			a.otpBoxes(c, p)
+			// 格子里下面留一段空，按钮不至于贴着。
+			spacer(c, 10)
+		},
 		footer: func() {
-			dialogButton(c, p, locales.DialogCancel(), func() { a.captchaOpen = false })
-			dialogIconButton(c, p, "refresh", p.Text, locales.CaptchaReset(), a.resetCaptcha)
+			dialogGhostButton(c, p, "refresh", p.Text, locales.CaptchaReset(), a.resetCaptcha)
 			ui.Spacer(c).Grow(1)
 			dialogIconButton(c, p, "check", p.Accent, locales.DialogConfirm(), func() {
 				a.applyCaptcha()
@@ -31,7 +35,7 @@ func (a *App) captchaDrawer(c *ui.Context, p Palette) {
 
 func (a *App) otpBoxes(c *ui.Context, p Palette) {
 	next := -1
-	ui.Row(c).Gap(12).Children(func() {
+	ui.Row(c).Gap(12).Justify(ui.Center).Children(func() {
 		for i := 0; i < captchaLength; i++ {
 			box := ui.TextInput(c.Key("otp"+string(rune('0'+i))), &a.captchaDigits[i]).
 				Bind(&a.captchaInputs[i]).Width(46).Height(54).Radius(10).
