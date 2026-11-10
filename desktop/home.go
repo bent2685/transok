@@ -28,6 +28,34 @@ func (a *App) home(c *ui.Context) {
 	})
 
 	ui.Overlay(c, func() {
+		// 底部渐隐：列表滚到按钮下方时被吃掉，落点深色纯黑、浅色纯白。
+		fade := ui.Box(c).Absolute().Left(0).Right(0).Bottom(0).Height(150).PassThrough()
+
+		// 分享中这层逐渐透出橄榄色，像是从底部往上打的光。
+		on := clamp01(fade.AnimateTo("share-glow", boolFloat(a.share), ui.Animation{
+			Duration:  700 * time.Millisecond,
+			Ease:      ui.EaseOut,
+			NonMotion: true,
+		}))
+		fade.LinearGradient(ui.LinearGradient{Angle: 180, Stops: []ui.GradientStop{
+			{Color: withAlpha(p.Canvas, 0), At: 0},
+			{Color: withAlpha(p.Canvas.Mix(p.Accent, 0.10*on), 0.92), At: 0.5},
+			{Color: withAlpha(p.Fade.Mix(p.Accent, 0.20*on), 1), At: 1},
+		}})
+
+		if on > 0.01 {
+			glow := ui.Box(c).Absolute().Left(0).Right(0).Bottom(0).Height(260).PassThrough()
+			glow.RadialGradient(ui.RadialGradient{
+				Center: ui.Point{X: 0.5, Y: 1},
+				Radius: 230,
+				Stops: []ui.GradientStop{
+					{Color: withAlpha(p.Accent, 0.17*on), At: 0},
+					{Color: withAlpha(p.Accent, 0.06*on), At: 0.5},
+					{Color: withAlpha(p.Accent, 0), At: 1},
+				},
+			})
+		}
+
 		ui.Row(c).Absolute().Left(0).Right(0).Bottom(26).Justify(ui.Center).Children(func() {
 			a.shareButton(c, p)
 		})
@@ -139,14 +167,75 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 }
 
 func (a *App) filesList(c *ui.Context, p Palette) {
+	if len(a.files) == 0 {
+		ui.Column(c).Grow(1).Children(func() { a.emptyList(c, p) })
+		return
+	}
+
 	a.list.Key = func(i int) any { return a.files[i].Id }
 
-	ui.List(c, &a.list, len(a.files), func(i int) {
-		a.fileRow(c, p, i)
-	}).Grow(1).Gap(8).Padding(0, 0, 90, 0).Children(func() {
-		if len(a.files) == 0 {
-			a.emptyList(c, p)
+	// 一整张卡片，条目之间用分割线隔开，像 iOS 的设置分组；底部让开渐隐区。
+	ui.Column(c).Grow(1).Padding(0, 0, 108, 0).Children(func() {
+		ui.Column(c).Grow(1).Radius(12).Background(p.Surface).Border(1, p.Border).
+			ClipInset(0, 0, 0, 0, 12).Children(func() {
+			list := ui.List(c, &a.list, len(a.files), func(i int) {
+				a.fileRow(c, p, i)
+			})
+			list.Grow(1).Scrollbars(false)
+		})
+	})
+}
+
+func (a *App) fileRow(c *ui.Context, p Palette, i int) {
+	f := a.files[i]
+
+	row := ui.Column(c).FillWidth()
+	row.Children(func() {
+		if i > 0 {
+			// 分割线从文字起始处开始，像 iOS 那样不压到图标。
+			ui.Row(c).Padding(0, 0, 0, 56).Children(func() {
+				ui.Box(c).Height(1).FillWidth().Background(p.Border)
+			})
 		}
+
+		body := ui.Row(c).Padding(9, 12).Gap(12).AlignItems(ui.Center)
+		if body.Hovered() {
+			body.Background(p.SurfaceHover)
+		}
+		body.OnClick(func() {
+			if f.Type == "pure-text" {
+				a.openTextDrawer(f)
+			}
+		})
+		body.Children(func() {
+			tile := ui.Column(c).Size(34, 34).Radius(8).Center().Background(p.SurfaceHover)
+			tile.Children(func() {
+				ui.Icon(c, icon(fileIcon(f))).FontSize(18).TextColor(fileTint(f))
+			})
+
+			ui.Column(c).Grow(1).Gap(3).Children(func() {
+				if f.Type == "pure-text" {
+					a.pureTextRow(c, p, i)
+				} else {
+					ui.Text(c, f.Name).FontSize(13.5).FontWeight(700).SingleLine()
+					ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+						meta := humanSize(f.Size)
+						if f.Type == "folder" {
+							meta = locales.HomeFolder()
+						}
+						ui.Text(c, meta).FontSize(11.5).TextColor(p.Muted)
+						a.noteLink(c, p, i)
+					})
+				}
+			})
+
+			if f.Type == "folder" {
+				ghostButton(c, p, "external-link", func() {
+					services.File().OpenInFileManager(f.Path)
+				})
+			}
+			ghostButton(c, p, "trash", func() { a.removeFile(f.Id) })
+		})
 	})
 }
 
@@ -178,45 +267,6 @@ func (a *App) emptyList(c *ui.Context, p Palette) {
 		spacer(c, 5)
 		ui.Text(c, locales.HomeEmptyHint()).FontSize(11.5).TextColor(p.Muted).
 			TextAlign(ui.Center).MaxWidth(220)
-	})
-}
-
-func (a *App) fileRow(c *ui.Context, p Palette, i int) {
-	f := a.files[i]
-
-	row := ui.Row(c).Padding(10, 11).Gap(10).Radius(10).AlignItems(ui.Center).
-		Background(p.Surface).Border(1, p.Border)
-	if row.Hovered() {
-		row.Border(1, ui.RGBA(124, 126, 44, 0.35))
-	}
-
-	row.Children(func() {
-		ui.Column(c).Size(36, 36).Radius(8).Center().Background(p.SurfaceHover).Children(func() {
-			ui.Icon(c, icon(fileIcon(f))).FontSize(18).TextColor(p.Text)
-		})
-
-		ui.Column(c).Grow(1).Gap(3).Children(func() {
-			if f.Type == "pure-text" {
-				a.pureTextRow(c, p, i)
-			} else {
-				ui.Text(c, f.Name).FontSize(13.5).FontWeight(700).SingleLine()
-				ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
-					meta := humanSize(f.Size)
-					if f.Type == "folder" {
-						meta = locales.HomeFolder()
-					}
-					ui.Text(c, meta).FontSize(11.5).TextColor(p.Muted)
-					a.noteLink(c, p, i)
-				})
-			}
-		})
-
-		if f.Type == "folder" {
-			ghostButton(c, p, "external-link", func() {
-				services.File().OpenInFileManager(f.Path)
-			})
-		}
-		ghostButton(c, p, "trash", func() { a.removeFile(f.Id) })
 	})
 }
 
@@ -537,6 +587,37 @@ func fileIcon(f services.FileInfo) string {
 		return name
 	}
 	return "file"
+}
+
+// fileTint 给每种文件类型一块颜色，图标用白色压在上面，像 iOS 设置里的图标。
+func fileTint(f services.FileInfo) ui.Color {
+	switch f.Type {
+	case "folder":
+		return ui.Hex("#3b82f6")
+	case "pure-text":
+		return ui.Hex("#7c7e2c")
+	case "jpg", "jpeg", "png", "gif", "svg", "bmp":
+		return ui.Hex("#0ea5e9")
+	case "pdf":
+		return ui.Hex("#ef4444")
+	case "doc", "docx":
+		return ui.Hex("#2563eb")
+	case "xls", "xlsx":
+		return ui.Hex("#16a34a")
+	case "ppt", "pptx":
+		return ui.Hex("#ea580c")
+	case "zip", "rar", "7z", "tar", "gz", "iso":
+		return ui.Hex("#d97706")
+	case "apk":
+		return ui.Hex("#22c55e")
+	case "ipa":
+		return ui.Hex("#64748b")
+	case "ts", "js", "tsx", "jsx", "html", "css", "scss", "json", "yaml", "toml":
+		return ui.Hex("#8b5cf6")
+	case "md", "txt":
+		return ui.Hex("#64748b")
+	}
+	return ui.Hex("#6b7280")
 }
 
 // fileIcons 对齐 Web 端 Uploader/file-type.ts 的映射。

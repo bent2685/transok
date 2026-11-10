@@ -96,6 +96,11 @@ func sectionLabel(c *ui.Context, p Palette, text string) {
 	ui.Text(c, text).FontSize(12).FontWeight(700).TextColor(p.Subtle)
 }
 
+// withAlpha 给颜色换一个透明度，做渐隐的分段。
+func withAlpha(c ui.Color, a float32) ui.Color {
+	return ui.RGBA(c.R, c.G, c.B, a)
+}
+
 // spacer 只是撑开一段固定高度：ui.Spacer 会吃掉剩余空间，这里不要它。
 func spacer(c *ui.Context, h float32) {
 	ui.Box(c).Height(h).FillWidth()
