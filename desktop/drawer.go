@@ -58,15 +58,12 @@ func (a *App) drawer(c *ui.Context, p Palette, open *bool, spec drawerSpec) {
 			}
 
 			panel.Children(func() {
-				// 托手居中对齐；关闭键单独浮在右上角，不参与居中计算。
-				ui.Row(c).Height(28).Justify(ui.Center).AlignItems(ui.Center).PassThrough().Children(func() {
-					ui.Box(c).Size(44, 4).Radius(999).Background(p.Handle)
-				})
-				ui.Row(c).Absolute().Right(14).Top(8).Children(func() {
-					ghostButton(c, p, "x", close)
+				// 关闭键浮在右上角的圆底按钮上，不占排版空间。
+				ui.Row(c).Absolute().Right(16).Top(14).Children(func() {
+					closeButton(c, p, close)
 				})
 
-				spacer(c, 16)
+				spacer(c, 26)
 				if spec.header != nil {
 					spec.header()
 				} else if spec.center {

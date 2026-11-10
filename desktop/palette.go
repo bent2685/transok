@@ -16,9 +16,8 @@ type Palette struct {
 	Accent       ui.Color
 	AccentText   ui.Color
 	Danger       ui.Color
-	// Elevated 是浮层里按钮这类浮在外壳之上的面；Handle 是抽屉托手那种淡描边。
+	// Elevated 是浮层里按钮这类浮在外壳之上的面。
 	Elevated ui.Color
-	Handle   ui.Color
 }
 
 func PaletteFor(dark bool) Palette {
@@ -37,7 +36,6 @@ func PaletteFor(dark bool) Palette {
 			AccentText:   ui.Hex("#ffffff"),
 			Danger:       ui.Hex("#ef4444"),
 			Elevated:     ui.Hex("#2b2b2b"),
-			Handle:       ui.Hex("#4a4a4a"),
 		}
 	}
 	return Palette{
@@ -53,7 +51,6 @@ func PaletteFor(dark bool) Palette {
 		AccentText:   ui.Hex("#ffffff"),
 		Danger:       ui.Hex("#dc2626"),
 		Elevated:     ui.Hex("#ececec"),
-		Handle:       ui.Hex("#cfcfcf"),
 	}
 }
 

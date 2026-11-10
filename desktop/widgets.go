@@ -67,6 +67,21 @@ func ghostButton(c *ui.Context, p Palette, name string, onClick func()) ui.Eleme
 	return b
 }
 
+// closeButton 是抽屉右上角的关闭键：圆形底色，悬停提亮。
+func closeButton(c *ui.Context, p Palette, onClick func()) ui.Element {
+	b := ui.ButtonBase(c).Size(28, 28).Padding(0).Radius(999).
+		Background(p.SurfaceHover).Cursor(ui.CursorPointer).OnClick(onClick)
+	tint := p.Muted
+	if b.Hovered() {
+		b.Background(p.Pressed)
+		tint = p.Text
+	}
+	b.Children(func() {
+		ui.Icon(c, icon("x")).FontSize(14).TextColor(tint)
+	})
+	return b
+}
+
 // card 是设置页那种分组卡片，行与行之间用分割线。
 func card(c *ui.Context, p Palette) ui.Element {
 	return ui.Column(c).Padding(2, 14).Radius(12).
