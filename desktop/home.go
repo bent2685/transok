@@ -233,7 +233,8 @@ func (a *App) pureTextRow(c *ui.Context, p Palette, i int) {
 		preview = locales.HomeTextNoContent()
 	}
 	link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
-		Cursor(ui.CursorPointer).OnClick(func() { a.openTextDrawer(f) })
+		Justify(ui.Start).Gap(4).Cursor(ui.CursorPointer).
+		OnClick(func() { a.openTextDrawer(f) })
 	link.Children(func() {
 		ui.Icon(c, icon("edit")).FontSize(13).TextColor(p.Accent)
 		ui.Text(c, preview).FontSize(11.5).TextColor(p.Accent).SingleLine()
@@ -247,7 +248,7 @@ func (a *App) noteLink(c *ui.Context, p Palette, i int) {
 		label = locales.HomeNoteAdd()
 	}
 	link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
-		Cursor(ui.CursorPointer).OnClick(func() {
+		Justify(ui.Start).Gap(4).Cursor(ui.CursorPointer).OnClick(func() {
 		a.noteID, a.noteDraft, a.noteOpen = f.Id, f.Note, true
 	})
 	link.Children(func() {
