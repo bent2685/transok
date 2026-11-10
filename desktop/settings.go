@@ -12,7 +12,7 @@ import (
 func (a *App) settings(c *ui.Context) {
 	p := a.palette()
 
-	ui.Column(c).Fill().Padding(a.topInset(c), 16, 16, 16).Children(func() {
+	ui.Column(c).Fill().Padding(0, 16, 16, 16).Children(func() {
 		dragHeader(c, p, locales.SettingsTitle(), func() { a.page = homeRoute })
 
 		spacer(c, 22)

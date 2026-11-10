@@ -85,16 +85,31 @@ func (a *App) View(c *ui.Context) {
 	a.syncLanguage()
 	c.SetTheme(Theme(PaletteFor(a.dark)))
 
-	switch a.page {
-	case settingsRoute:
-		a.settings(c)
-	case discoverRoute:
-		a.discover(c)
-	case allURLRoute:
-		a.allURLs(c)
-	default:
-		a.home(c)
+	ui.Column(c).Fill().Children(func() {
+		// 顶部原本是系统标题栏的区域：整条都能拖动窗口，双击则最小化/缩放。
+		ui.Box(c).FillWidth().Height(a.titleBarStrip(c)).DragWindow()
+		ui.Column(c).Grow(1).Children(func() {
+			switch a.page {
+			case settingsRoute:
+				a.settings(c)
+			case discoverRoute:
+				a.discover(c)
+			case allURLRoute:
+				a.allURLs(c)
+			default:
+				a.home(c)
+			}
+		})
+	})
+}
+
+// titleBarStrip 是留给窗口按钮的那条空白带，再加上一点呼吸。
+func (a *App) titleBarStrip(c *ui.Context) float32 {
+	h := c.TitleBar().Height + 6
+	if h < 34 {
+		h = 34
 	}
+	return h
 }
 
 // syncLanguage 把选择器里的语言应用到 App，只在真的换了以后切。

@@ -86,44 +86,44 @@ func spacer(c *ui.Context, h float32) {
 	ui.Box(c).Height(h).FillWidth()
 }
 
-// dialogButton 是弹窗里的纯文字按钮。
+// dialogButton 是抽屉里的无底色文字按钮。
 func dialogButton(c *ui.Context, p Palette, label string, onClick func()) ui.Element {
-	b := ui.ButtonBase(c).Height(32).Padding(0, 12).Radius(8).
+	b := ui.ButtonBase(c).Height(38).Padding(0, 14).Radius(10).
 		Cursor(ui.CursorPointer).OnClick(onClick)
 	if b.Hovered() {
 		b.Background(p.SurfaceHover)
 	}
 	b.Children(func() {
-		ui.Text(c, label).FontSize(12.5).TextColor(p.Text)
+		ui.Text(c, label).FontSize(13.5).TextColor(p.Text)
 	})
 	return b
 }
 
-// dialogIconButton 是弹窗里带图标的描边按钮。
-func dialogIconButton(c *ui.Context, p Palette, iconName, label string, onClick func()) ui.Element {
-	b := ui.ButtonBase(c).Height(32).Padding(0, 12).Radius(8).
-		Background(p.Surface).Border(1, p.Border).Cursor(ui.CursorPointer).OnClick(onClick)
+// dialogIconButton 是抽屉里带图标的描边按钮，图标可以单独着色。
+func dialogIconButton(c *ui.Context, p Palette, iconName string, iconColor ui.Color, label string, onClick func()) ui.Element {
+	b := ui.ButtonBase(c).Height(38).Padding(0, 14).Radius(10).
+		Background(p.Elevated).Border(1, p.Border).Cursor(ui.CursorPointer).OnClick(onClick)
 	if b.Hovered() {
 		b.Background(p.SurfaceHover)
 	}
 	b.Children(func() {
-		ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-			ui.Icon(c, icon(iconName)).FontSize(14).TextColor(p.Text)
-			ui.Text(c, label).FontSize(12.5).TextColor(p.Text)
+		ui.Row(c).Gap(7).AlignItems(ui.Center).Children(func() {
+			ui.Icon(c, icon(iconName)).FontSize(15).TextColor(iconColor)
+			ui.Text(c, label).FontSize(13.5).TextColor(p.Text)
 		})
 	})
 	return b
 }
 
-// primaryDialogButton 是弹窗里的主按钮。
+// primaryDialogButton 是对话框里的主按钮。
 func primaryDialogButton(c *ui.Context, p Palette, label string, onClick func()) ui.Element {
-	b := ui.ButtonBase(c).Height(32).Padding(0, 14).Radius(8).
+	b := ui.ButtonBase(c).Height(38).Padding(0, 16).Radius(10).
 		Background(p.Accent).Cursor(ui.CursorPointer).OnClick(onClick)
 	if b.Hovered() {
 		b.Background(ui.Hex("#8b8d38"))
 	}
 	b.Children(func() {
-		ui.Text(c, label).FontSize(12.5).TextColor(p.AccentText)
+		ui.Text(c, label).FontSize(13.5).TextColor(p.AccentText)
 	})
 	return b
 }

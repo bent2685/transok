@@ -2,6 +2,7 @@ package desktop
 
 import (
 	"fmt"
+	"time"
 
 	"transok/backend/app"
 	"transok/backend/services"
@@ -13,7 +14,7 @@ import (
 func (a *App) home(c *ui.Context) {
 	p := a.palette()
 
-	ui.Column(c).Fill().Padding(a.topInset(c), 16, 0, 16).Children(func() {
+	ui.Column(c).Fill().Padding(0, 16, 0, 16).Children(func() {
 		a.homeHeader(c, p)
 		spacer(c, 12)
 		a.dropArea(c, p)
@@ -31,24 +32,11 @@ func (a *App) home(c *ui.Context) {
 		})
 	})
 
-	if a.captchaOpen {
-		a.captchaSheet(c, p)
-	}
-	if a.noteOpen {
-		a.noteDialog(c, p)
-	}
-	if a.textOpen {
-		a.pureTextDialog(c, p)
-	}
-}
-
-// topInset 让内容避开窗口左上角的红黄绿按钮。
-func (a *App) topInset(c *ui.Context) float32 {
-	top := c.TitleBar().Height + 6
-	if top < 38 {
-		top = 38
-	}
-	return top
+	// 抽屉常驻构建，关闭时靠 Exit 动画退场。
+	a.captchaSheet(c, p)
+	// 弹窗常驻构建，关闭时靠 Exit 动画退场。
+	a.noteDialog(c, p)
+	a.pureTextDialog(c, p)
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {
@@ -202,7 +190,8 @@ func (a *App) pureTextRow(c *ui.Context, p Palette, i int) {
 	f := &a.files[i]
 
 	name := ui.TextInput(c.Key("text-name-"+f.Id), &f.Name).FontSize(13.5).
-		FontWeight(700).Padding(0).Background(ui.Transparent).BorderWidth(0)
+		FontWeight(700).Padding(0).Background(ui.Transparent).BorderWidth(0).
+		Placeholder(locales.HomeTextInputTitle())
 	if name.Changed() {
 		services.Storage().Set("share-list", a.files)
 	}
@@ -212,7 +201,8 @@ func (a *App) pureTextRow(c *ui.Context, p Palette, i int) {
 		if preview == "" {
 			preview = locales.HomeTextNoContent()
 		}
-		link := ui.Row(c).Gap(4).AlignItems(ui.Center).Cursor(ui.CursorPointer).OnClick(func() {
+		link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
+			Cursor(ui.CursorPointer).OnClick(func() {
 			a.textID, a.textDraft, a.textOpen = f.Id, f.Text, true
 		})
 		link.Children(func() {
@@ -228,7 +218,8 @@ func (a *App) noteLink(c *ui.Context, p Palette, i int) {
 	if label == "" {
 		label = locales.HomeNoteAdd()
 	}
-	link := ui.Row(c).Gap(4).AlignItems(ui.Center).Cursor(ui.CursorPointer).OnClick(func() {
+	link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
+		Cursor(ui.CursorPointer).OnClick(func() {
 		a.noteID, a.noteDraft, a.noteOpen = f.Id, f.Note, true
 	})
 	link.Children(func() {
@@ -238,49 +229,127 @@ func (a *App) noteLink(c *ui.Context, p Palette, i int) {
 }
 
 func (a *App) shareButton(c *ui.Context, p Palette) {
-	name, label := "broadcast", locales.HomeShareStart()
+	label := locales.HomeShareStart()
 	if a.share {
-		name, label = "player-stop", locales.HomeShareStop()
+		label = locales.HomeShareStop()
 	}
 
-	b := ui.ButtonBase(c).Size(56, 56).Padding(0).Radius(999).
-		Background(p.Accent).Cursor(ui.CursorPointer).OnClick(a.toggleShare).Label(label)
-	b.Shadow(0, 10, 28, -4, ui.RGBA(124, 126, 44, 0.55))
-	if b.Hovered() {
-		b.Background(ui.Hex("#8b8d38"))
-	}
-	b.Children(func() {
-		ui.Icon(c, icon(name)).FontSize(24).TextColor(p.AccentText)
-	})
-}
+	box := ui.Row(c).Size(56, 56).Center()
+	box.Children(func() {
+		b := ui.ButtonBase(c).Size(56, 56).Padding(0).Radius(999).
+			Background(p.Accent).Cursor(ui.CursorPointer).
+			OnClick(a.toggleShare).Label(label)
+		b.Shadow(0, 10, 28, -4, ui.RGBA(124, 126, 44, 0.55))
+		if b.Hovered() {
+			b.Background(ui.Hex("#8b8d38"))
+		}
 
-func (a *App) noteDialog(c *ui.Context, p Palette) {
-	ui.Modal(c, &a.noteOpen, func() {
-		ui.Column(c).Width(300).Padding(18).Gap(10).Radius(14).
-			Background(p.Surface).Border(1, p.Border).Children(func() {
-			ui.Text(c, locales.HomeNoteTitle()).FontSize(15).FontWeight(700)
-			ui.TextInput(c.Key("note"), &a.noteDraft).
-				Placeholder(locales.HomeNotePlaceholder()).AutoFocus().
-				OnSubmit(func() { a.saveNote() })
-			ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
-				dialogButton(c, p, locales.DialogCancel(), func() { a.noteOpen = false })
-				primaryDialogButton(c, p, locales.DialogConfirm(), a.saveNote)
+		// 带过冲的弹簧值：0 未分享，1 分享中。
+		t := b.AnimateTo("share", boolFloat(a.share), ui.Animation{
+			Spring:    ui.SpringOptions{Duration: 380 * time.Millisecond, Bounce: 0.28},
+			NonMotion: true,
+		})
+		on := clamp01(t)
+
+		// 分享中：两圈错开的呼吸光晕，先实心后描边，扩张到位再淡出。
+		if on > 0.02 {
+			halo := box.Loop("share-halo", 1600*time.Millisecond, ui.Linear)
+			for i := 0; i < 2; i++ {
+				offset := float32(0)
+				peak := float32(0.35)
+				if i == 1 {
+					offset, peak = 0.3125, 0.5
+				}
+				u := frac(halo + offset)
+				opacity, scale := pulse(u, peak)
+				ring := ui.Box(c).Absolute().Left(0).Top(0).Right(0).Bottom(0).
+					Radius(999).PassThrough()
+				if i == 0 {
+					ring.Background(p.Accent)
+				} else {
+					ring.Border(1.5, p.Accent)
+				}
+				ring.Opacity(opacity*on).Scale(scale, scale)
+			}
+		}
+
+		// 图标交叉切换：一个转出去，另一个从反方向转进来。
+		b.Children(func() {
+			ui.Box(c).Size(26, 26).Children(func() {
+				swapIcon(c, p, "broadcast", 1-on, -90*on, 1-0.4*on)
+				swapIcon(c, p, "player-stop", on, 90*(1-on), 0.6+0.4*on)
 			})
 		})
 	})
 }
 
+// swapIcon 是叠在同一个位置上的图标，用透明度、角度和缩放做切换。
+func swapIcon(c *ui.Context, p Palette, name string, opacity, rotate, scale float32) {
+	if opacity <= 0.01 {
+		return
+	}
+	layer := ui.Box(c).Absolute().Left(0).Top(0).Right(0).Bottom(0).Center()
+	layer.Opacity(opacity).Scale(scale, scale)
+	layer.Children(func() {
+		ui.Icon(c, icon(name)).FontSize(24).TextColor(p.AccentText).Rotate(rotate)
+	})
+}
+
+// pulse 把 0..1 的循环时间换成光晕的透明度与缩放：前 45% 扩张并浮现，之后停在原处淡出。
+func pulse(u, peak float32) (opacity, scale float32) {
+	if u <= 0.45 {
+		k := u / 0.45
+		return peak * k, 1 + 0.22*k
+	}
+	return peak * (1 - (u-0.45)/0.55), 1.22
+}
+
+func frac(v float32) float32 {
+	v -= float32(int(v))
+	if v < 0 {
+		v++
+	}
+	return v
+}
+
+func clamp01(v float32) float32 {
+	if v < 0 {
+		return 0
+	}
+	if v > 1 {
+		return 1
+	}
+	return v
+}
+
+func boolFloat(b bool) float32 {
+	if b {
+		return 1
+	}
+	return 0
+}
+
+func (a *App) noteDialog(c *ui.Context, p Palette) {
+	modalCard(c, p, &a.noteOpen, func() {
+		ui.Text(c, locales.HomeNoteTitle()).FontSize(15).FontWeight(700)
+		ui.TextInput(c.Key("note"), &a.noteDraft).
+			Placeholder(locales.HomeNotePlaceholder()).AutoFocus().
+			OnSubmit(func() { a.saveNote() })
+		ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
+			dialogButton(c, p, locales.DialogCancel(), func() { a.noteOpen = false })
+			primaryDialogButton(c, p, locales.DialogConfirm(), a.saveNote)
+		})
+	})
+}
+
 func (a *App) pureTextDialog(c *ui.Context, p Palette) {
-	ui.Modal(c, &a.textOpen, func() {
-		ui.Column(c).Width(300).Padding(18).Gap(10).Radius(14).
-			Background(p.Surface).Border(1, p.Border).Children(func() {
-			ui.Text(c, locales.HomeEditText()).FontSize(15).FontWeight(700)
-			ui.TextInput(c.Key("pure-text"), &a.textDraft).Lines(3, 6).
-				Height(110).Placeholder(locales.HomeEnterContent()).AutoFocus()
-			ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
-				dialogButton(c, p, locales.DialogCancel(), func() { a.textOpen = false })
-				primaryDialogButton(c, p, locales.DialogConfirm(), a.saveText)
-			})
+	modalCard(c, p, &a.textOpen, func() {
+		ui.Text(c, locales.HomeEditText()).FontSize(15).FontWeight(700)
+		ui.TextInput(c.Key("pure-text"), &a.textDraft).Lines(3, 6).
+			Height(110).Placeholder(locales.HomeEnterContent()).AutoFocus()
+		ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
+			dialogButton(c, p, locales.DialogCancel(), func() { a.textOpen = false })
+			primaryDialogButton(c, p, locales.DialogConfirm(), a.saveText)
 		})
 	})
 }
@@ -288,7 +357,7 @@ func (a *App) pureTextDialog(c *ui.Context, p Palette) {
 func (a *App) addPureText() {
 	id := fmt.Sprintf("text-%d", len(a.files)+1)
 	a.files = append(a.files, services.FileInfo{
-		Id: id, Name: locales.HomeTextInputTitle(), Path: id, Type: "pure-text",
+		Id: id, Path: id, Type: "pure-text",
 	})
 	services.Storage().Set("share-list", a.files)
 	a.textID, a.textDraft, a.textOpen = id, "", true
@@ -360,9 +429,6 @@ func (a *App) saveText() {
 	for i := range a.files {
 		if a.files[i].Id == a.textID {
 			a.files[i].Text = a.textDraft
-			if a.files[i].Name == locales.HomeTextInputTitle() {
-				a.files[i].Name = locales.HomeTextNoContent()
-			}
 		}
 	}
 	a.textOpen = false

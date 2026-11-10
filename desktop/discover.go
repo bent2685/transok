@@ -15,7 +15,7 @@ import (
 func (a *App) discover(c *ui.Context) {
 	p := a.palette()
 
-	ui.Column(c).Fill().Padding(a.topInset(c), 16, 16, 16).Children(func() {
+	ui.Column(c).Fill().Padding(0, 16, 16, 16).Children(func() {
 		header := ui.Row(c).Gap(12).AlignItems(ui.Center).DragWindow()
 		header.Children(func() {
 			circleButton(c, p, "arrow-left", func() { a.page = homeRoute })
@@ -61,7 +61,7 @@ func (a *App) discover(c *ui.Context) {
 func (a *App) allURLs(c *ui.Context) {
 	p := a.palette()
 
-	ui.Column(c).Fill().Padding(a.topInset(c), 16, 16, 16).Children(func() {
+	ui.Column(c).Fill().Padding(0, 16, 16, 16).Children(func() {
 		dragHeader(c, p, locales.AllURLTitle(), func() { a.page = homeRoute })
 		spacer(c, 14)
 
