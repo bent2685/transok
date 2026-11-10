@@ -108,29 +108,25 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 
 	// ButtonBase 是横向排布，里面再放一列，三个元素才能换行居中。
 	area.Children(func() {
-		ui.Column(c).Gap(10).Center().PassThrough().Children(func() {
-			tile := ui.Column(c).Size(40, 40).Radius(11).Center().Background(p.Accent)
-			tile.Shadow(0, 6, 16, 0, ui.RGBA(124, 126, 44, 0.42))
-			tile.Children(func() {
-				ui.Icon(c, icon("upload")).FontSize(21).TextColor(p.AccentText)
-			})
-
-			ui.Text(c, locales.HomeDropHint()).FontSize(12.5).TextColor(p.Subtle).
-				TextAlign(ui.Center)
-
-			// 视觉上的按钮，点击由外层整块接住。
-			pill := ui.Row(c).Height(32).Padding(0, 16).Radius(8).PassThrough().
-				Background(p.Accent)
+		ui.Column(c).Gap(8).Center().PassThrough().Children(func() {
+			// 次要样式的按钮：浅底描边，按下由外层整块接住。
+			pill := ui.Row(c).Height(34).Padding(0, 16).Radius(8).PassThrough().
+				Background(p.Canvas).Border(1, p.Border)
 			if hovered {
-				pill.Background(ui.Hex("#8b8d38"))
+				pill.Background(p.SurfaceHover).Border(1, ui.RGBA(124, 126, 44, 0.45))
 			}
 			pill.Children(func() {
 				ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-					ui.Icon(c, icon("plus")).FontSize(14).TextColor(p.AccentText)
+					ui.Icon(c, icon("plus")).FontSize(14).TextColor(p.Text)
 					ui.Text(c, locales.HomeUploadButton()).FontSize(12.5).FontWeight(600).
-						TextColor(p.AccentText).SingleLine()
+						TextColor(p.Text).SingleLine()
 				})
 			})
+
+			ui.Text(c, locales.HomeDropHint()).FontSize(13.5).FontWeight(700).
+				TextColor(p.Text).TextAlign(ui.Center)
+			ui.Text(c, locales.HomeNoLimit()).FontSize(11.5).TextColor(p.Muted).
+				TextAlign(ui.Center)
 		})
 	})
 }
