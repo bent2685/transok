@@ -41,5 +41,7 @@
   "captchaDescription": "請輸入{length}位驗證碼",
   "captchaReset": "重置",
   "dialogConfirm": "確認",
-  "dialogCancel": "取消"
+  "dialogCancel": "取消",
+  "homeEmptyTitle": "尚無內容",
+  "homeEmptyHint": "將檔案或資料夾拖曳到這裡"
 }

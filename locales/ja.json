@@ -41,5 +41,7 @@
   "captchaDescription": "{length}桁のコードを入力してください",
   "captchaReset": "リセット",
   "dialogConfirm": "確認",
-  "dialogCancel": "キャンセル"
+  "dialogCancel": "キャンセル",
+  "homeEmptyTitle": "まだ何もありません",
+  "homeEmptyHint": "ファイルやフォルダをここにドラッグ"
 }

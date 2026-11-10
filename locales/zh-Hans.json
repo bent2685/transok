@@ -41,5 +41,7 @@
   "captchaDescription": "请输入{length}位验证码",
   "captchaReset": "重置",
   "dialogConfirm": "确认",
-  "dialogCancel": "取消"
+  "dialogCancel": "取消",
+  "homeEmptyTitle": "还没有内容",
+  "homeEmptyHint": "拖动文件或文件夹到这里"
 }

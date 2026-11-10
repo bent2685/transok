@@ -130,7 +130,9 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 		})
 		ui.Row(c).Gap(6).Children(func() {
 			chip(c, p, "keyboard", locales.HomePureText(), a.addPureText)
-			chip(c, p, "trash", "", a.clearFiles)
+			if len(a.files) > 0 {
+				chip(c, p, "trash", "", a.clearFiles)
+			}
 		})
 	})
 }
@@ -141,9 +143,40 @@ func (a *App) filesList(c *ui.Context, p Palette) {
 	ui.List(c, &a.list, len(a.files), func(i int) {
 		a.fileRow(c, p, i)
 	}).Grow(1).Gap(8).Padding(0, 0, 90, 0).Children(func() {
-		ui.Column(c).Padding(0, 0, 40, 0).Center().Children(func() {
-			ui.Text(c, locales.HomeNoFiles()).FontSize(12.5).TextColor(p.Muted)
+		if len(a.files) == 0 {
+			a.emptyList(c, p)
+		}
+	})
+}
+
+// emptyList 是清单为空时的占位：居中的图标与说明，本身也接得住拖进来的文件。
+func (a *App) emptyList(c *ui.Context, p Palette) {
+	box := ui.Column(c).Grow(1).Center().Padding(0, 0, 40, 0)
+
+	if paths := box.DroppedFiles(); len(paths) > 0 {
+		a.addPaths(paths)
+	}
+	over := box.FileDragOver()
+	tint := p.Muted
+	if over {
+		tint = p.Accent
+	}
+
+	box.Children(func() {
+		tile := ui.Column(c).Size(46, 46).Radius(12).Center().Background(p.SurfaceHover)
+		if over {
+			tile.Background(ui.RGBA(124, 126, 44, 0.18))
+		}
+		tile.Children(func() {
+			ui.Icon(c, icon("files-off")).FontSize(21).TextColor(tint)
 		})
+
+		spacer(c, 12)
+		ui.Text(c, locales.HomeEmptyTitle()).FontSize(13).FontWeight(700).
+			TextColor(p.Subtle)
+		spacer(c, 5)
+		ui.Text(c, locales.HomeEmptyHint()).FontSize(11.5).TextColor(p.Muted).
+			TextAlign(ui.Center).MaxWidth(220)
 	})
 }
 

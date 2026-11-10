@@ -46,5 +46,7 @@
   },
   "captchaReset": "Reset",
   "dialogConfirm": "Confirm",
-  "dialogCancel": "Cancel"
+  "dialogCancel": "Cancel",
+  "homeEmptyTitle": "Nothing here yet",
+  "homeEmptyHint": "Drag files or folders here"
 }

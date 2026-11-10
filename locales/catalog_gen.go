@@ -456,3 +456,23 @@ func DialogCancel() string { return In(i18n.Locale()).DialogCancel() }
 func (msgs Messages) DialogCancel() string {
 	return Catalog.Format(msgs.locale, "dialogCancel", nil)
 }
+
+// HomeEmptyTitle says "Nothing here yet"
+// in the language the app shows.
+func HomeEmptyTitle() string { return In(i18n.Locale()).HomeEmptyTitle() }
+
+// HomeEmptyTitle says "Nothing here yet"
+// in the language of msgs.
+func (msgs Messages) HomeEmptyTitle() string {
+	return Catalog.Format(msgs.locale, "homeEmptyTitle", nil)
+}
+
+// HomeEmptyHint says "Drag files or folders here"
+// in the language the app shows.
+func HomeEmptyHint() string { return In(i18n.Locale()).HomeEmptyHint() }
+
+// HomeEmptyHint says "Drag files or folders here"
+// in the language of msgs.
+func (msgs Messages) HomeEmptyHint() string {
+	return Catalog.Format(msgs.locale, "homeEmptyHint", nil)
+}

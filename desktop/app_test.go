@@ -23,8 +23,10 @@ func TestHomeShowsEmptyState(t *testing.T) {
 	if !tt.HasText("Transok") {
 		t.Errorf("header missing, texts %q", tt.Texts())
 	}
-	if !tt.HasText(locales.HomeNoFiles()) {
-		t.Errorf("empty state missing, texts %q", tt.Texts())
+	for _, want := range []string{locales.HomeEmptyTitle(), locales.HomeEmptyHint()} {
+		if !tt.HasText(want) {
+			t.Errorf("empty state missing %q, texts %q", want, tt.Texts())
+		}
 	}
 	if !tt.HasText(locales.HomeUploadButton()) {
 		t.Errorf("upload button missing, texts %q", tt.Texts())
