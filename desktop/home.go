@@ -8,6 +8,7 @@ import (
 	"transok/backend/services"
 	"transok/locales"
 
+	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 	"github.com/google/uuid"
 )
@@ -16,13 +17,40 @@ func (a *App) home(c *ui.Context) {
 	p := a.palette()
 
 	ui.Column(c).Fill().Padding(0, 16, 0, 16).Children(func() {
-		a.homeHeader(c, p)
-		spacer(c, 14)
-		a.dropArea(c, p)
-		spacer(c, 18)
-		a.filesHeader(c, p)
-		spacer(c, 14)
-		a.filesList(c, p)
+		// 标题区吸顶：只量它的下沿，下面的滚动区从这里开始。
+		ui.Column(c).Bind(&a.headerBar).Children(func() {
+			a.homeHeader(c, p)
+			spacer(c, 14)
+		})
+		if b := a.headerBar.Bounds(c); b.H > 0 {
+			a.headerBottom = b.Y + b.H
+		}
+
+		ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
+			// 顶部留一点空，内容滚上来时先经过渐隐带，不会一上来就被压住边。
+			ui.Column(c).FillWidth().Padding(10, 0, 0, 0).Children(func() {
+				a.dropArea(c, p)
+				spacer(c, 18)
+				a.filesHeader(c, p)
+				spacer(c, 14)
+				a.filesList(c, p)
+			})
+			spacer(c, 130)
+		})
+	})
+
+	// 顶部渐隐：内容滚到标题下方时被吃掉，和底部那层对称。
+	ui.Overlay(c, func() {
+		if a.headerBottom > 0 {
+			// 只压在滚动区上沿，不越界到标题区，否则会盖住副标题。
+			top := ui.Box(c).Absolute().Left(0).Right(0).
+				Top(a.headerBottom).Height(34).PassThrough()
+			top.LinearGradient(ui.LinearGradient{Angle: 180, Stops: []ui.GradientStop{
+				{Color: withAlpha(p.Canvas, 1), At: 0},
+				{Color: withAlpha(p.Canvas, 0.55), At: 0.5},
+				{Color: withAlpha(p.Canvas, 0), At: 1},
+			}})
+		}
 	})
 
 	ui.Overlay(c, func() {
@@ -109,11 +137,11 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 	// ButtonBase 是横向排布，里面再放一列，三个元素才能换行居中。
 	area.Children(func() {
 		ui.Column(c).Gap(8).Center().PassThrough().Children(func() {
-			// 次要样式的按钮：浅底描边，按下由外层整块接住。
-			pill := ui.Row(c).Height(34).Padding(0, 16).Radius(8).PassThrough().
-				Background(p.Canvas).Border(1, p.Border)
+			// 液态玻璃按钮，按下由外层整块接住。
+			pill := ui.Row(c).Height(34).Padding(0, 16).Radius(11).PassThrough().
+				Material(glass.Glass{})
 			if hovered {
-				pill.Background(p.SurfaceHover).Border(1, ui.RGBA(124, 126, 44, 0.45))
+				pill.Background(glassLift(p, 0.08))
 			}
 			pill.Children(func() {
 				ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
@@ -150,19 +178,16 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 
 func (a *App) filesList(c *ui.Context, p Palette) {
 	if len(a.files) == 0 {
-		ui.Column(c).Grow(1).Children(func() { a.emptyList(c, p) })
+		ui.Column(c).Height(220).Children(func() { a.emptyList(c, p) })
 		return
 	}
 
-	// 整张卡片一起滚，不把滚动限制在卡片内部；卡片下面留出的空当比悬浮按钮高。
-	ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
-		ui.Column(c).FillWidth().Radius(12).Background(p.Surface).Border(1, p.Border).
-			ClipInset(0, 0, 0, 0, 12).Children(func() {
-			for i := range a.files {
-				a.fileRow(c, p, i)
-			}
-		})
-		spacer(c, 130)
+	// 卡片本身不滚，滚动交给外层的整页滚动容器。
+	ui.Column(c).FillWidth().Radius(12).Background(p.Surface).Border(1, p.Border).
+		ClipInset(0, 0, 0, 0, 12).Children(func() {
+		for i := range a.files {
+			a.fileRow(c, p, i)
+		}
 	})
 }
 
