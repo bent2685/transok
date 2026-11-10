@@ -135,7 +135,7 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 			}
 		})
 		glassGroup(c, p).Children(func() {
-			glassChip(c, p, "keyboard", locales.HomePureText(), a.addPureText)
+			glassChip(c, p, "text-plus", "", a.addPureText)
 			if len(a.files) > 0 {
 				glassChip(c, p, "trash", "", a.clearFiles)
 			}
