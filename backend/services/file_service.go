@@ -3,9 +3,7 @@ package services
 import (
 	"encoding/json"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -62,18 +60,9 @@ func (c *fileService) SelectFolder() []string {
 	return paths
 }
 
-/* 在系统文件管理器中打开目录内部 */
-func (c *fileService) OpenInFileManager(path string) error {
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = exec.Command("open", path)
-	case "windows":
-		cmd = exec.Command("explorer", path)
-	default:
-		cmd = exec.Command("xdg-open", path)
-	}
-	return cmd.Start()
+/* 在系统文件管理器中显示它：定位到所在目录并选中，不打开文件本身 */
+func (c *fileService) OpenInFileManager(path string) {
+	mygo.Shell.ShowItemInFolder(path)
 }
 
 /* Get FileInfo object by absolute file path */
