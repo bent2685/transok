@@ -1,20 +1,15 @@
 package services
 
 import (
-	"context"
 	"net"
 	"runtime"
 	"sort"
 	"strings"
 	"sync"
-	"time"
 	"transok/backend/consts"
-
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type SystemService struct {
-	ctx     context.Context
 	env     string
 	version string
 	appInfo map[string]string
@@ -29,26 +24,13 @@ func System() *SystemService {
 			system = &SystemService{}
 			system.appInfo = consts.APP_INFO
 			system.env = consts.APP_INFO["env"]
-			go system.loopWindowEvent()
 		})
 	}
 	return system
 }
 
-func (c *SystemService) Start(ctx context.Context, version string) {
-	c.ctx = ctx
+func (c *SystemService) Start(version string) {
 	c.version = version
-
-	if screen, err := wailsRuntime.ScreenGetAll(ctx); err == nil && len(screen) > 0 {
-		for _, sc := range screen {
-			if sc.IsCurrent {
-				if sc.Size.Width < consts.MIN_WINDOW_WIDTH || sc.Size.Height < consts.MIN_WINDOW_HEIGHT {
-					wailsRuntime.WindowMaximise(ctx)
-					break
-				}
-			}
-		}
-	}
 }
 
 // GetVersion returns the version number
@@ -321,13 +303,3 @@ func (c *SystemService) GetPlatform() string {
 	return runtime.GOOS
 }
 
-func (s *SystemService) loopWindowEvent() {
-	for {
-		time.Sleep(time.Second + time.Millisecond*500)
-		if s.ctx != nil {
-			wailsRuntime.WindowShow(s.ctx)
-			break
-		}
-	}
-
-}

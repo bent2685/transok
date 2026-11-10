@@ -9,3 +9,5 @@ design/
 test
 .DS_Store
 .kiro
+dist
+.mygo

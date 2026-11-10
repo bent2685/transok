@@ -1,0 +1,13 @@
+{
+  "name": "Transok",
+  "slug": "transok",
+  "identifier": "com.bent2685.transok",
+  "version": "0.5.2",
+  "copyright": "Copyright © 2024 transok. All rights reserved.",
+  "out": "dist",
+  "linux": {
+    "webview": false,
+    "maintainer": "bent2685 <bent2685@outlook.com>",
+    "comment": "Efficient LAN file sharing"
+  }
+}

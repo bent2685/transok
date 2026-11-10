@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -10,13 +9,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/egoist/mygo"
 	"github.com/google/uuid"
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-type fileService struct {
-	ctx context.Context
-}
+type fileService struct{}
 
 type FileInfo struct {
 	Id   string
@@ -40,33 +37,30 @@ func File() *fileService {
 	return file
 }
 
-func (c *fileService) Start(ctx context.Context) {
-	c.ctx = ctx
-}
 
 /* Select multiple files */
 func (c *fileService) SelectFiles() []string {
 	// Open file selection dialog, allowing multiple selection
-	files, err := wailsRuntime.OpenMultipleFilesDialog(c.ctx, wailsRuntime.OpenDialogOptions{
-		Title: "Select File",
+	paths, err := mygo.Dialog.Open(mygo.OpenDialogOptions{
+		Title:    "Select File",
+		Multiple: true,
 	})
-
 	if err != nil {
 		return nil
 	}
-
-	return files
+	return paths
 }
 
 /* Select a single folder（系统对话框无法同时选文件与文件夹，故单独入口） */
 func (c *fileService) SelectFolder() []string {
-	dir, err := wailsRuntime.OpenDirectoryDialog(c.ctx, wailsRuntime.OpenDialogOptions{
-		Title: "Select Folder",
+	paths, err := mygo.Dialog.Open(mygo.OpenDialogOptions{
+		Title:     "Select Folder",
+		Directory: true,
 	})
-	if err != nil || dir == "" {
+	if err != nil || len(paths) == 0 {
 		return nil
 	}
-	return []string{dir}
+	return paths
 }
 
 /* 在系统文件管理器中打开目录内部 */
