@@ -2,6 +2,7 @@ package desktop
 
 import (
 	"sync"
+	"time"
 
 	"transok/backend/services"
 	"transok/backend/utils/mdns/handlers"
@@ -86,21 +87,32 @@ func (a *App) View(c *ui.Context) {
 	c.SetTheme(Theme(PaletteFor(a.dark)))
 
 	ui.Column(c).Fill().Children(func() {
-		// 顶部原本是系统标题栏的区域：整条都能拖动窗口，双击则最小化/缩放。
+		// 顶部原本是系统标题栏的区域：整条都能拖动窗口，双击则缩放/最小化。
 		ui.Box(c).FillWidth().Height(a.titleBarStrip(c)).DragWindow()
 		ui.Column(c).Grow(1).Children(func() {
-			switch a.page {
-			case settingsRoute:
-				a.settings(c)
-			case discoverRoute:
-				a.discover(c)
-			case allURLRoute:
-				a.allURLs(c)
-			default:
-				a.home(c)
-			}
+			// 关键值按页区分：切页时新页淡入上移，旧页淡出，像共享轴转场。
+			ui.Column(c).Key(a.page).Fill().Transition(pageMotion).Children(func() {
+				switch a.page {
+				case settingsRoute:
+					a.settings(c)
+				case discoverRoute:
+					a.discover(c)
+				case allURLRoute:
+					a.allURLs(c)
+				default:
+					a.home(c)
+				}
+			})
 		})
 	})
+}
+
+// pageMotion 是页面之间的转场：进来时从下方淡入，离开时向上淡出。
+var pageMotion = ui.ElementTransition{
+	Duration:     200 * time.Millisecond,
+	ExitDuration: 140 * time.Millisecond,
+	Enter:        &ui.Motion{Y: 10},
+	Exit:         &ui.Motion{Y: -8},
 }
 
 // titleBarStrip 是留给窗口按钮的那条空白带，再加上一点呼吸。
