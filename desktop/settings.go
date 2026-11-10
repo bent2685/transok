@@ -24,7 +24,7 @@ func (a *App) settings(c *ui.Context) {
 			divider(c, p)
 			a.portRow(c, p)
 			divider(c, p)
-			a.valueRow(c, p, "device-laptop", locales.SettingsDeviceName(), a.deviceName())
+			a.deviceRow(c, p)
 		})
 
 		spacer(c, 22)
@@ -100,14 +100,36 @@ func (a *App) valueRow(c *ui.Context, p Palette, iconName, label, value string) 
 
 func (a *App) portRow(c *ui.Context, p Palette) {
 	row := a.row(c, p, "plug", locales.SettingsPort(), func() {
-		input := ui.TextInput(c.Key("port"), &a.port).Width(92).Height(28).Radius(6).
-			FontSize(13).TextAlign(ui.End).Padding(0, 6).
-			Background(ui.Transparent).BorderWidth(0)
-		if input.Submitted() || input.Changed() {
+		input := a.fieldInput(c, p, "port", &a.port, 76)
+		input.OnSubmit(func() { services.Storage().Set("port", a.port) })
+		if input.Changed() {
 			services.Storage().Set("port", a.port)
 		}
 	})
 	rowHover(row, p)
+}
+
+// deviceRow 让设备名就地在输入框里改，改完写回存储，mDNS 广播读的就是它。
+func (a *App) deviceRow(c *ui.Context, p Palette) {
+	row := a.row(c, p, "device-laptop", locales.SettingsDeviceName(), func() {
+		input := a.fieldInput(c, p, "device", &a.device, 132)
+		input.OnSubmit(func() { services.Storage().Set("uname", a.device) })
+		if input.Changed() {
+			services.Storage().Set("uname", a.device)
+		}
+	})
+	rowHover(row, p)
+}
+
+// fieldInput 是行右侧那种小输入框，一眼能看出可以改。
+func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, width float32) ui.Element {
+	input := ui.TextInput(c.Key(key), value).Width(width).Height(28).Radius(7).
+		FontSize(13).TextAlign(ui.End).Padding(0, 8).
+		Background(p.Canvas).Border(1, p.Border)
+	if input.Focused() {
+		input.Border(1, p.Accent)
+	}
+	return input
 }
 
 func (a *App) languageRow(c *ui.Context, p Palette) {
@@ -134,13 +156,4 @@ func (a *App) languageRow(c *ui.Context, p Palette) {
 		})
 	})
 	rowHover(row, p)
-}
-
-func (a *App) deviceName() string {
-	if uname, ok := services.Storage().Get("uname"); ok {
-		if name, ok := uname.(string); ok {
-			return name
-		}
-	}
-	return "transok"
 }

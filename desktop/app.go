@@ -30,6 +30,7 @@ type App struct {
 
 	appInfo  map[string]string
 	port     string
+	device   string
 	captcha  string
 	language string
 
@@ -71,6 +72,12 @@ func New() *App {
 	}
 	if share, ok := services.Storage().Get("is-share"); ok {
 		app.share = share.(bool)
+	}
+	app.device = "transok"
+	if uname, ok := services.Storage().Get("uname"); ok {
+		if name, ok := uname.(string); ok {
+			app.device = name
+		}
 	}
 	app.files = services.File().GetShareList()
 	app.captcha = services.Share().GetCaptcha()
