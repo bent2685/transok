@@ -5,6 +5,10 @@
   "version": "0.5.2",
   "copyright": "Copyright © 2024 transok. All rights reserved.",
   "out": "dist",
+  "i18n": {
+    "dir": "locales",
+    "source": "en"
+  },
   "linux": {
     "webview": false,
     "maintainer": "bent2685 <bent2685@outlook.com>",

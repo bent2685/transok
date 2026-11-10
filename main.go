@@ -34,17 +34,19 @@ func main() {
 	application := desktop.New()
 
 	mygo.App.WhenReady(func() {
-		application.Attach(mygo.NewWindow(mygo.WindowOptions{
-			Title:       appInfo["name"],
-			Width:       380,
-			Height:      620,
-			MinWidth:    380,
-			MaxWidth:    380,
-			MinHeight:   620,
-			MaxHeight:   620,
+		win := mygo.NewWindow(mygo.WindowOptions{
+			Title:         appInfo["name"],
+			Width:         380,
+			Height:        620,
+			MinWidth:      380,
+			MaxWidth:      380,
+			MinHeight:     620,
+			MaxHeight:     620,
 			DisableResize: true,
-			Content:     ui.View(application.View),
-		}))
+			TitleBarStyle: mygo.TitleBarHidden,
+			Content:       ui.View(application.View),
+		})
+		application.Attach(win)
 
 		application.SetDark(mygo.Theme.IsDark())
 		mygo.Theme.OnUpdated(func() { application.SetDark(mygo.Theme.IsDark()) })

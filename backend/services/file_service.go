@@ -37,7 +37,6 @@ func File() *fileService {
 	return file
 }
 
-
 /* Select multiple files */
 func (c *fileService) SelectFiles() []string {
 	// Open file selection dialog, allowing multiple selection

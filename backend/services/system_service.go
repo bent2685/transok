@@ -302,4 +302,3 @@ func (c *SystemService) GetAppInfo() map[string]string {
 func (c *SystemService) GetPlatform() string {
 	return runtime.GOOS
 }
-
