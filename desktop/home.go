@@ -17,11 +17,9 @@ func (a *App) home(c *ui.Context) {
 
 	ui.Column(c).Fill().Padding(0, 16, 0, 16).Children(func() {
 		a.homeHeader(c, p)
-		spacer(c, 12)
+		spacer(c, 14)
 		a.dropArea(c, p)
-		spacer(c, 12)
-		a.limitLine(c, p)
-		spacer(c, 16)
+		spacer(c, 18)
 		a.filesHeader(c, p)
 		spacer(c, 14)
 		a.filesList(c, p)
@@ -95,62 +93,35 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 
 // dropArea 接住从系统拖进来的文件与文件夹，也提供选择入口。
 func (a *App) dropArea(c *ui.Context, p Palette) {
-	// 整块都能点：点哪儿都弹出选择文件/文件夹的菜单。
-	area := ui.ButtonBase(c).Height(124).Radius(10).Center().Gap(9).
-		Background(p.Surface).BorderWidth(1).BorderStyle(ui.BorderDashed).
-		BorderColor(p.Border).Cursor(ui.CursorPointer).
-		OnClick(func() { a.uploadMenu = !a.uploadMenu })
+	// 整块都能点，点了直接开系统的多选文件对话框；文件夹拖进来即可。
+	area := ui.ButtonBase(c).Height(96).Padding(0, 16).Radius(12).Gap(12).
+		Background(p.Surface).Border(1, p.Border).Cursor(ui.CursorPointer).
+		OnClick(func() { a.addPaths(services.File().SelectFiles()) })
 	if area.Hovered() {
-		area.BorderColor(ui.RGBA(124, 126, 44, 0.45))
+		area.Border(1, ui.RGBA(124, 126, 44, 0.4))
 	}
 
 	if paths := area.DroppedFiles(); len(paths) > 0 {
 		a.addPaths(paths)
 	}
 	if area.FileDragOver() {
-		area.BorderColor(p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
+		area.Border(1, p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
 	}
 
 	area.Children(func() {
-		tile := ui.Column(c).Size(38, 38).Radius(10).Center().Background(p.Accent)
-		tile.Shadow(0, 5, 14, 0, ui.RGBA(124, 126, 44, 0.4))
+		tile := ui.Column(c).Size(40, 40).Radius(11).Center().
+			Background(ui.RGBA(124, 126, 44, 0.16))
 		tile.Children(func() {
-			ui.Icon(c, icon("upload")).FontSize(21).TextColor(p.AccentText)
+			ui.Icon(c, icon("upload")).FontSize(20).TextColor(p.Accent)
 		})
 
-		ui.Text(c, locales.HomeDropHint()).FontSize(12.5).TextColor(p.Subtle)
-
-		// 视觉上的按钮，点击交给外层的整块区域。
-		pill := ui.Row(c).Height(32).Padding(0, 16).Radius(8).PassThrough().
-			Background(p.Accent)
-		if area.Hovered() {
-			pill.Background(ui.Hex("#8b8d38"))
-		}
-		pill.Children(func() {
-			ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-				ui.Icon(c, icon("plus")).FontSize(14).TextColor(p.AccentText)
-				ui.Text(c, locales.HomeUploadButton()).FontSize(12.5).FontWeight(600).
-					TextColor(p.AccentText).SingleLine()
-			})
+		ui.Column(c).Grow(1).Gap(3).Children(func() {
+			ui.Text(c, locales.HomeDropHint()).FontSize(13).FontWeight(700).
+				TextColor(p.Text).SingleLine()
+			ui.Text(c, locales.HomeNoLimit()).FontSize(11).TextColor(p.Muted).SingleLine()
 		})
 
-		ui.Popover(c, area, &a.uploadMenu, func() {
-			ui.Button(c, locales.HomeSelectFile()).OnClick(func() {
-				a.uploadMenu = false
-				a.addPaths(services.File().SelectFiles())
-			})
-			ui.Button(c, locales.HomeSelectFolder()).OnClick(func() {
-				a.uploadMenu = false
-				a.addPaths(services.File().SelectFolder())
-			})
-		})
-	})
-}
-
-func (a *App) limitLine(c *ui.Context, p Palette) {
-	ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-		ui.Box(c).Size(4, 4).Radius(999).Background(p.Accent)
-		ui.Text(c, locales.HomeNoLimit()).FontSize(11.5).TextColor(p.Muted)
+		ui.Icon(c, icon("chevron-right")).FontSize(15).TextColor(p.Muted)
 	})
 }
 

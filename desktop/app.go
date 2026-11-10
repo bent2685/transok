@@ -37,7 +37,6 @@ type App struct {
 	files []services.FileInfo
 	share bool
 
-	uploadMenu  bool
 	applied     string
 	devices     []handlers.DiscoverDevice
 	deviceList  ui.ListState

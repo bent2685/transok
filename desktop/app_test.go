@@ -28,8 +28,8 @@ func TestHomeShowsEmptyState(t *testing.T) {
 			t.Errorf("empty state missing %q, texts %q", want, tt.Texts())
 		}
 	}
-	if !tt.HasText(locales.HomeUploadButton()) {
-		t.Errorf("upload button missing, texts %q", tt.Texts())
+	if !tt.HasText(locales.HomeDropHint()) {
+		t.Errorf("drop hint missing, texts %q", tt.Texts())
 	}
 }
 
