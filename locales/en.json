@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "homeTitle": "LAN File Sharing",
-  "homeDropHint": "Click or drag file to upload",
+  "homeDropHint": "Drag files or folders into the app",
   "homeUploadButton": "Upload File",
   "homeSelectFile": "Select Files",
   "homeSelectFolder": "Select Folder",
@@ -41,7 +41,10 @@
   "captchaDescription": "Please enter {length}-digit code",
   "@captchaDescription": {
     "placeholders": {
-      "length": { "type": "int", "example": "5" }
+      "length": {
+        "type": "int",
+        "example": "5"
+      }
     }
   },
   "captchaReset": "Reset",
@@ -51,5 +54,6 @@
   "homeEmptyHint": "Drag files or folders here",
   "homeTextTitleLabel": "Title",
   "homeTextContentLabel": "Content",
-  "homeNoteLabel": "Note"
+  "homeNoteLabel": "Note",
+  "homeDropRelease": "Release to add"
 }

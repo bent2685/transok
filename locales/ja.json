@@ -1,7 +1,7 @@
 {
   "@@locale": "ja",
   "homeTitle": "LAN ファイル共有",
-  "homeDropHint": "ファイルをアップロード",
+  "homeDropHint": "ファイルやフォルダをアプリ内にドラッグ",
   "homeUploadButton": "ファイルをアップロード",
   "homeSelectFile": "ファイルを選択",
   "homeSelectFolder": "フォルダを選択",
@@ -46,5 +46,6 @@
   "homeEmptyHint": "ファイルやフォルダをここにドラッグ",
   "homeTextTitleLabel": "タイトル",
   "homeTextContentLabel": "内容",
-  "homeNoteLabel": "メモ"
+  "homeNoteLabel": "メモ",
+  "homeDropRelease": "離して追加"
 }

@@ -93,36 +93,45 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 
 // dropArea 接住从系统拖进来的文件与文件夹，也提供选择入口。
 func (a *App) dropArea(c *ui.Context, p Palette) {
-	// 整块都能点，点了直接开系统的多选文件对话框；文件夹拖进来即可。
-	area := ui.ButtonBase(c).Height(96).Padding(0, 16).Radius(12).Gap(12).
+	// 整块也能点，点了直接开系统的多选文件对话框。
+	area := ui.ButtonBase(c).Height(132).Radius(12).Center().
 		Background(p.Surface).BorderWidth(1).BorderStyle(ui.BorderDashed).
 		BorderColor(p.Border).Cursor(ui.CursorPointer).
 		OnClick(func() { a.addPaths(services.File().SelectFiles()) })
-	if area.Hovered() {
+	hovered := area.Hovered()
+	if hovered {
 		area.BorderColor(ui.RGBA(124, 126, 44, 0.45))
-	}
-
-	if paths := area.DroppedFiles(); len(paths) > 0 {
-		a.addPaths(paths)
 	}
 	if area.FileDragOver() {
 		area.BorderColor(p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
 	}
 
+	// ButtonBase 是横向排布，里面再放一列，三个元素才能换行居中。
 	area.Children(func() {
-		tile := ui.Column(c).Size(40, 40).Radius(11).Center().
-			Background(ui.RGBA(124, 126, 44, 0.16))
-		tile.Children(func() {
-			ui.Icon(c, icon("upload")).FontSize(20).TextColor(p.Accent)
-		})
+		ui.Column(c).Gap(10).Center().PassThrough().Children(func() {
+			tile := ui.Column(c).Size(40, 40).Radius(11).Center().Background(p.Accent)
+			tile.Shadow(0, 6, 16, 0, ui.RGBA(124, 126, 44, 0.42))
+			tile.Children(func() {
+				ui.Icon(c, icon("upload")).FontSize(21).TextColor(p.AccentText)
+			})
 
-		ui.Column(c).Grow(1).Gap(3).Children(func() {
-			ui.Text(c, locales.HomeDropHint()).FontSize(13).FontWeight(700).
-				TextColor(p.Text).SingleLine()
-			ui.Text(c, locales.HomeNoLimit()).FontSize(11).TextColor(p.Muted).SingleLine()
-		})
+			ui.Text(c, locales.HomeDropHint()).FontSize(12.5).TextColor(p.Subtle).
+				TextAlign(ui.Center)
 
-		ui.Icon(c, icon("chevron-right")).FontSize(15).TextColor(p.Muted)
+			// 视觉上的按钮，点击由外层整块接住。
+			pill := ui.Row(c).Height(32).Padding(0, 16).Radius(8).PassThrough().
+				Background(p.Accent)
+			if hovered {
+				pill.Background(ui.Hex("#8b8d38"))
+			}
+			pill.Children(func() {
+				ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
+					ui.Icon(c, icon("plus")).FontSize(14).TextColor(p.AccentText)
+					ui.Text(c, locales.HomeUploadButton()).FontSize(12.5).FontWeight(600).
+						TextColor(p.AccentText).SingleLine()
+				})
+			})
+		})
 	})
 }
 

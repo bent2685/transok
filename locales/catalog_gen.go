@@ -47,11 +47,11 @@ func (msgs Messages) HomeTitle() string {
 	return Catalog.Format(msgs.locale, "homeTitle", nil)
 }
 
-// HomeDropHint says "Click or drag file to upload"
+// HomeDropHint says "Drag files or folders into the app"
 // in the language the app shows.
 func HomeDropHint() string { return In(i18n.Locale()).HomeDropHint() }
 
-// HomeDropHint says "Click or drag file to upload"
+// HomeDropHint says "Drag files or folders into the app"
 // in the language of msgs.
 func (msgs Messages) HomeDropHint() string {
 	return Catalog.Format(msgs.locale, "homeDropHint", nil)
@@ -505,4 +505,14 @@ func HomeNoteLabel() string { return In(i18n.Locale()).HomeNoteLabel() }
 // in the language of msgs.
 func (msgs Messages) HomeNoteLabel() string {
 	return Catalog.Format(msgs.locale, "homeNoteLabel", nil)
+}
+
+// HomeDropRelease says "Release to add"
+// in the language the app shows.
+func HomeDropRelease() string { return In(i18n.Locale()).HomeDropRelease() }
+
+// HomeDropRelease says "Release to add"
+// in the language of msgs.
+func (msgs Messages) HomeDropRelease() string {
+	return Catalog.Format(msgs.locale, "homeDropRelease", nil)
 }

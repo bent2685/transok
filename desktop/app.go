@@ -96,7 +96,14 @@ func (a *App) View(c *ui.Context) {
 	a.syncLanguage()
 	c.SetTheme(Theme(PaletteFor(a.dark)))
 
-	ui.Column(c).Fill().Children(func() {
+	// 根节点就是整个窗口的拖放目标：文件拖到窗口任何位置都算，不必拖进上传框。
+	root := ui.Column(c).Fill()
+	if paths := root.DroppedFiles(); len(paths) > 0 {
+		a.addPaths(paths)
+	}
+	dragging := root.FileDragOver()
+
+	root.Children(func() {
 		// 顶部原本是系统标题栏的区域：整条都能拖动窗口，双击则缩放/最小化。
 		ui.Box(c).FillWidth().Height(a.titleBarStrip(c)).DragWindow()
 		ui.Column(c).Grow(1).Children(func() {
@@ -115,6 +122,8 @@ func (a *App) View(c *ui.Context) {
 			})
 		})
 	})
+
+	a.dropGlow(c, dragging)
 }
 
 // pageMotion 是页面之间的转场：进来时从下方淡入，离开时向上淡出。

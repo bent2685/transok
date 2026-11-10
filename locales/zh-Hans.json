@@ -1,7 +1,7 @@
 {
   "@@locale": "zh-Hans",
   "homeTitle": "局域网文件分享",
-  "homeDropHint": "点击或拖拽文件上传",
+  "homeDropHint": "将文件/文件夹拖动到 APP 内",
   "homeUploadButton": "上传文件",
   "homeSelectFile": "选择文件",
   "homeSelectFolder": "选择文件夹",
@@ -46,5 +46,6 @@
   "homeEmptyHint": "拖动文件或文件夹到这里",
   "homeTextTitleLabel": "标题",
   "homeTextContentLabel": "内容",
-  "homeNoteLabel": "备注"
+  "homeNoteLabel": "备注",
+  "homeDropRelease": "松开即可添加"
 }
