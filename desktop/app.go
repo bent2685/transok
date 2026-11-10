@@ -35,7 +35,6 @@ type App struct {
 
 	files []services.FileInfo
 	share bool
-	list  ui.ListState
 
 	uploadMenu  bool
 	applied     string

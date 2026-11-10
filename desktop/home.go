@@ -172,17 +172,15 @@ func (a *App) filesList(c *ui.Context, p Palette) {
 		return
 	}
 
-	a.list.Key = func(i int) any { return a.files[i].Id }
-
-	// 一整张卡片，条目之间用分割线隔开，像 iOS 的设置分组；底部让开渐隐区。
-	ui.Column(c).Grow(1).Padding(0, 0, 108, 0).Children(func() {
-		ui.Column(c).Grow(1).Radius(12).Background(p.Surface).Border(1, p.Border).
+	// 整张卡片一起滚，不把滚动限制在卡片内部；卡片下面留出的空当比悬浮按钮高。
+	ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
+		ui.Column(c).FillWidth().Radius(12).Background(p.Surface).Border(1, p.Border).
 			ClipInset(0, 0, 0, 0, 12).Children(func() {
-			list := ui.List(c, &a.list, len(a.files), func(i int) {
+			for i := range a.files {
 				a.fileRow(c, p, i)
-			})
-			list.Grow(1).Scrollbars(false)
+			}
 		})
+		spacer(c, 130)
 	})
 }
 
