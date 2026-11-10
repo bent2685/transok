@@ -1,16 +1,34 @@
 # Development Guide
 
 This is a Wails project using the App Router architecture.
+
 You **MUST** absolutely obey this guide.
 
 You need to communicate with the user in Chinese.
+
+> 迁移中：`feat/mygo-native` 分支正在把桌面端从 Wails + WebView 换成 MyGo native UI。迁移期间以本文档下方「MyGo 迁移」一节为准，两边冲突时该节优先。
 
 ---
 
 ## Tech Stack
 - Golang
-- react+vite+unocss
-- wails GUI
+- react+vite+unocss（迁移完成后移除）
+- wails GUI（迁移完成后移除）
+- MyGo native UI（`github.com/egoist/mygo`，目标形态）
+
+---
+
+## MyGo 迁移（进行中）
+
+目标形态：客户端全部窗口用 MyGo native UI（Go 绘制，无 WebView、无 HTML/CSS/JS），Wails 与 `frontend/` 一并移除。HTTP 下载页（`backend/app` 的 gin + `templates/downpage`）与 `dash/` 是给被分享方的浏览器页面，不在此次迁移范围。
+
+- Go 版本要求 1.27.3+（`go.mod` 已抬升）。
+- CLI 以 tool 形式钉住：`go tool mygo`（v0.8.3），不要另装全局版本。
+- 维护护栏技能在 `.agents/skills/mygo-maintenance/`，并用软链挂在 `.claude/skills/`。改动 UI 前先读它。
+- 视图是「状态的函数」，每帧重建。**元素（`ui.Element`）只在当前 build pass 内有效**：跨帧只能存 `ui.Handle`、widget state 和业务数据，不能存元素；`*ui.Context` 不进结构体、不进 goroutine。
+- 有状态控件先 `c.Key(key)` 再构造；列表先配 `.ItemKey`/`.Grow` 再 `.Rows`。
+- 慢 IO / 重计算留在 worker，结果用 `Window.Update` 回投；绘制回调只画，不做业务。
+- 验证顺序：`go tool mygo vet .` → `go tool mygo i18n check` → `CGO_ENABLED=0 go test ./...` → `go tool mygo dev` 眼看效果。
 
 ---
 
