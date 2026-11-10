@@ -1,9 +1,28 @@
 package desktop
 
 import (
+	"embed"
+	"sync"
+
 	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 )
+
+//go:embed static/appicon.png
+var staticFS embed.FS
+
+// appIcon 是标题左边那个 App 图标，只在第一次用到时解码。
+var appIcon = sync.OnceValue(func() ui.ImageSource {
+	data, err := staticFS.ReadFile("static/appicon.png")
+	if err != nil {
+		return nil
+	}
+	img, err := ui.DecodeBitmap(data)
+	if err != nil {
+		return nil
+	}
+	return img
+})
 
 // 这是几个页面共用的视觉零件，尺寸对齐迁移前 Web 端的写法。
 // 需要自己控制底色边框的地方一律用 ui.ButtonBase：ui.Button 会每帧按主题

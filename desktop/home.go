@@ -14,7 +14,7 @@ import (
 )
 
 // homeHeaderHeight 是标题区预留的高度：内容从这里开始，标题绝对定位在上面。
-const homeHeaderHeight float32 = 70
+const homeHeaderHeight float32 = 58
 
 func (a *App) home(c *ui.Context) {
 	p := a.palette()
@@ -93,14 +93,18 @@ func (a *App) home(c *ui.Context) {
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {
-	header := ui.Row(c).AlignItems(ui.End).DragWindow()
+	header := ui.Row(c).AlignItems(ui.Center).DragWindow()
 	header.Children(func() {
-		ui.Column(c).Grow(1).Gap(3).Children(func() {
-			ui.Row(c).AlignItems(ui.End).Gap(4).Children(func() {
-				ui.Text(c, a.appInfo["name"]).FontSize(27).FontWeight(800).LetterSpacing(-1.2)
-				ui.Box(c).Size(5, 5).Radius(1).Background(p.Accent).Margin(0, 0, 5, 0)
+		ui.Column(c).Grow(1).Children(func() {
+			ui.Row(c).AlignItems(ui.Center).Gap(9).Children(func() {
+				if icon := appIcon(); icon != nil {
+					ui.Image(c, icon).Size(36, 36).Fit(ui.Cover).Radius(9)
+				}
+				ui.Row(c).AlignItems(ui.End).Gap(4).Children(func() {
+					ui.Text(c, a.appInfo["name"]).FontSize(27).FontWeight(800).LetterSpacing(-1.2)
+					ui.Box(c).Size(5, 5).Radius(1).Background(p.Accent).Margin(0, 0, 5, 0)
+				})
 			})
-			ui.Text(c, locales.HomeTitle()).FontSize(12.5).TextColor(p.Subtle)
 		})
 		glassGroup(c, p).Children(func() {
 			glassSegment(c, p, "device-desktop-search", func() { a.page = discoverRoute })
