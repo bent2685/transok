@@ -75,13 +75,11 @@ func iconButton(c *ui.Context, p Palette, name string, onClick func()) ui.Elemen
 	return b
 }
 
-// circleButton 是详情页左上角的返回键。
+// circleButton 是二级页面左上角的返回键，同样用液态玻璃，按下会有轻微回弹。
 func circleButton(c *ui.Context, p Palette, name string, onClick func()) ui.Element {
 	b := ui.ButtonBase(c).Size(38, 38).Padding(0).Radius(999).
-		Background(p.Surface).Cursor(ui.CursorPointer).OnClick(onClick)
-	if b.Hovered() {
-		b.Background(p.SurfaceHover)
-	}
+		Material(glass.Glass{Interactive: true}).Cursor(ui.CursorPointer).
+		OnClick(onClick)
 	b.Children(func() {
 		ui.Icon(c, icon(name)).FontSize(17).TextColor(p.Text)
 	})
