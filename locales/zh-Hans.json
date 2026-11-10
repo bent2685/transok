@@ -43,5 +43,7 @@
   "dialogConfirm": "确认",
   "dialogCancel": "取消",
   "homeEmptyTitle": "还没有内容",
-  "homeEmptyHint": "拖动文件或文件夹到这里"
+  "homeEmptyHint": "拖动文件或文件夹到这里",
+  "homeTextTitleLabel": "标题",
+  "homeTextContentLabel": "内容"
 }

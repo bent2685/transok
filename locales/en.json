@@ -48,5 +48,7 @@
   "dialogConfirm": "Confirm",
   "dialogCancel": "Cancel",
   "homeEmptyTitle": "Nothing here yet",
-  "homeEmptyHint": "Drag files or folders here"
+  "homeEmptyHint": "Drag files or folders here",
+  "homeTextTitleLabel": "Title",
+  "homeTextContentLabel": "Content"
 }

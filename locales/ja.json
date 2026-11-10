@@ -43,5 +43,7 @@
   "dialogConfirm": "確認",
   "dialogCancel": "キャンセル",
   "homeEmptyTitle": "まだ何もありません",
-  "homeEmptyHint": "ファイルやフォルダをここにドラッグ"
+  "homeEmptyHint": "ファイルやフォルダをここにドラッグ",
+  "homeTextTitleLabel": "タイトル",
+  "homeTextContentLabel": "内容"
 }

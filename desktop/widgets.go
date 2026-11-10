@@ -86,6 +86,22 @@ func spacer(c *ui.Context, h float32) {
 	ui.Box(c).Height(h).FillWidth()
 }
 
+// labeledField 是带背景的输入字段：标签落在左上角，输入区透明贴在它下面，
+// 获得焦点时外框转成橄榄色。
+func labeledField(c *ui.Context, p Palette, label string, focused bool, input func()) ui.Element {
+	field := ui.Column(c).FillWidth().Padding(9, 12, 10, 12).Radius(10).
+		Background(p.Canvas).Border(1, p.Border)
+	if focused {
+		field.Border(1, p.Accent)
+	}
+	field.Children(func() {
+		ui.Text(c, label).FontSize(10.5).FontWeight(700).LetterSpacing(0.5).TextColor(p.Muted)
+		spacer(c, 5)
+		input()
+	})
+	return field
+}
+
 // dialogButton 是抽屉里的无底色文字按钮。
 func dialogButton(c *ui.Context, p Palette, label string, onClick func()) ui.Element {
 	b := ui.ButtonBase(c).Height(38).Padding(0, 14).Radius(10).

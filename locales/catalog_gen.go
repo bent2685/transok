@@ -476,3 +476,23 @@ func HomeEmptyHint() string { return In(i18n.Locale()).HomeEmptyHint() }
 func (msgs Messages) HomeEmptyHint() string {
 	return Catalog.Format(msgs.locale, "homeEmptyHint", nil)
 }
+
+// HomeTextTitleLabel says "Title"
+// in the language the app shows.
+func HomeTextTitleLabel() string { return In(i18n.Locale()).HomeTextTitleLabel() }
+
+// HomeTextTitleLabel says "Title"
+// in the language of msgs.
+func (msgs Messages) HomeTextTitleLabel() string {
+	return Catalog.Format(msgs.locale, "homeTextTitleLabel", nil)
+}
+
+// HomeTextContentLabel says "Content"
+// in the language the app shows.
+func HomeTextContentLabel() string { return In(i18n.Locale()).HomeTextContentLabel() }
+
+// HomeTextContentLabel says "Content"
+// in the language of msgs.
+func (msgs Messages) HomeTextContentLabel() string {
+	return Catalog.Format(msgs.locale, "homeTextContentLabel", nil)
+}

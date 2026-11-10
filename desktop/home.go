@@ -33,10 +33,10 @@ func (a *App) home(c *ui.Context) {
 	})
 
 	// 抽屉常驻构建，关闭时靠 Exit 动画退场。
-	a.captchaSheet(c, p)
+	a.captchaDrawer(c, p)
 	// 弹窗常驻构建，关闭时靠 Exit 动画退场。
-	a.noteDialog(c, p)
-	a.pureTextDialog(c, p)
+	a.noteDrawer(c, p)
+	a.pureTextDrawer(c, p)
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {
@@ -220,28 +220,23 @@ func (a *App) fileRow(c *ui.Context, p Palette, i int) {
 }
 
 func (a *App) pureTextRow(c *ui.Context, p Palette, i int) {
-	f := &a.files[i]
+	f := a.files[i]
 
-	name := ui.TextInput(c.Key("text-name-"+f.Id), &f.Name).FontSize(13.5).
-		FontWeight(700).Padding(0).Background(ui.Transparent).BorderWidth(0).
-		Placeholder(locales.HomeTextInputTitle())
-	if name.Changed() {
-		services.Storage().Set("share-list", a.files)
+	name := f.Name
+	if name == "" {
+		name = locales.HomePureText()
 	}
+	ui.Text(c, name).FontSize(13.5).FontWeight(700).SingleLine()
 
-	ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-		preview := f.Text
-		if preview == "" {
-			preview = locales.HomeTextNoContent()
-		}
-		link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
-			Cursor(ui.CursorPointer).OnClick(func() {
-			a.textID, a.textDraft, a.textOpen = f.Id, f.Text, true
-		})
-		link.Children(func() {
-			ui.Icon(c, icon("edit")).FontSize(13).TextColor(p.Accent)
-			ui.Text(c, preview).FontSize(11.5).TextColor(p.Accent).SingleLine()
-		})
+	preview := f.Text
+	if preview == "" {
+		preview = locales.HomeTextNoContent()
+	}
+	link := ui.ButtonBase(c).Padding(0).Background(ui.Transparent).
+		Cursor(ui.CursorPointer).OnClick(func() { a.openTextDrawer(f) })
+	link.Children(func() {
+		ui.Icon(c, icon("edit")).FontSize(13).TextColor(p.Accent)
+		ui.Text(c, preview).FontSize(11.5).TextColor(p.Accent).SingleLine()
 	})
 }
 
@@ -362,29 +357,59 @@ func boolFloat(b bool) float32 {
 	return 0
 }
 
-func (a *App) noteDialog(c *ui.Context, p Palette) {
-	modalCard(c, p, &a.noteOpen, func() {
-		ui.Text(c, locales.HomeNoteTitle()).FontSize(15).FontWeight(700)
-		ui.TextInput(c.Key("note"), &a.noteDraft).
-			Placeholder(locales.HomeNotePlaceholder()).AutoFocus().
-			OnSubmit(func() { a.saveNote() })
-		ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
+func (a *App) noteDrawer(c *ui.Context, p Palette) {
+	a.drawer(c, p, &a.noteOpen, drawerSpec{
+		icon:        "message-plus",
+		title:       locales.HomeNoteTitle(),
+		description: locales.HomeNotePlaceholder(),
+		body: func() {
+			ui.TextInput(c.Key("note"), &a.noteDraft).
+				FillWidth().AutoFocus().OnSubmit(func() { a.saveNote() })
+		},
+		footer: func() {
+			ui.Spacer(c).Grow(1)
 			dialogButton(c, p, locales.DialogCancel(), func() { a.noteOpen = false })
 			primaryDialogButton(c, p, locales.DialogConfirm(), a.saveNote)
-		})
+		},
 	})
 }
 
-func (a *App) pureTextDialog(c *ui.Context, p Palette) {
-	modalCard(c, p, &a.textOpen, func() {
-		ui.Text(c, locales.HomeEditText()).FontSize(15).FontWeight(700)
-		ui.TextInput(c.Key("pure-text"), &a.textDraft).Lines(3, 6).
-			Height(110).Placeholder(locales.HomeEnterContent()).AutoFocus()
-		ui.Row(c).Gap(8).Justify(ui.End).Children(func() {
+func (a *App) pureTextDrawer(c *ui.Context, p Palette) {
+	a.drawer(c, p, &a.textOpen, drawerSpec{
+		header: func() {
+			ui.Text(c, locales.HomeEditText()).FontSize(11).FontWeight(700).
+				LetterSpacing(0.4).TextColor(p.Muted)
+			spacer(c, 6)
+
+			// 标题就地可改：输入框长得像标题，右边一个笔形图标提示可编辑。
+			ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+				ui.TextInput(c.Key("text-name"), &a.textName).Bind(&a.textTitle).
+					Grow(1).FontSize(21).FontWeight(800).Padding(0).
+					Background(ui.Transparent).BorderWidth(0).
+					Placeholder(locales.HomeTextInputTitle()).AutoFocus()
+				ui.Icon(c, icon("edit")).FontSize(14).TextColor(p.Muted)
+			})
+		},
+		body: func() {
+			labeledField(c, p, locales.HomeTextContentLabel(), a.textContent.FocusWithin(c), func() {
+				ui.TextArea(c.Key("text-body"), &a.textDraft).Bind(&a.textContent).
+					Lines(6, 14).FillWidth().FontSize(13).Padding(0).
+					Background(ui.Transparent).BorderWidth(0).
+					Placeholder(locales.HomeEnterContent())
+			})
+		},
+		footer: func() {
+			ui.Spacer(c).Grow(1)
 			dialogButton(c, p, locales.DialogCancel(), func() { a.textOpen = false })
 			primaryDialogButton(c, p, locales.DialogConfirm(), a.saveText)
-		})
+		},
 	})
+}
+
+// openTextDrawer 把条目的标题与内容读进草稿，改完点确认才写回。
+func (a *App) openTextDrawer(f services.FileInfo) {
+	a.textID, a.textName, a.textDraft = f.Id, f.Name, f.Text
+	a.textOpen = true
 }
 
 func (a *App) addPureText() {
@@ -393,7 +418,7 @@ func (a *App) addPureText() {
 		Id: id, Path: id, Type: "pure-text",
 	})
 	services.Storage().Set("share-list", a.files)
-	a.textID, a.textDraft, a.textOpen = id, "", true
+	a.textID, a.textName, a.textDraft, a.textOpen = id, "", "", true
 }
 
 // addPaths 把选中的路径变成分享项，去重后写回存储。
@@ -461,6 +486,7 @@ func (a *App) saveNote() {
 func (a *App) saveText() {
 	for i := range a.files {
 		if a.files[i].Id == a.textID {
+			a.files[i].Name = a.textName
 			a.files[i].Text = a.textDraft
 		}
 	}

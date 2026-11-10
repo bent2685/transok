@@ -52,9 +52,12 @@ type App struct {
 	noteID    string
 	noteDraft string
 
-	textOpen  bool
-	textID    string
-	textDraft string
+	textOpen    bool
+	textID      string
+	textName    string
+	textDraft   string
+	textTitle   ui.Handle
+	textContent ui.Handle
 }
 
 // New 读取已持久化的状态，视图第一帧就能显示正确的内容。
