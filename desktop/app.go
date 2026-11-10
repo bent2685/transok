@@ -42,6 +42,7 @@ type App struct {
 	deviceList  ui.ListState
 	devicesOnce sync.Once
 
+	shareOpen     bool
 	captchaOpen   bool
 	captchaDigits []string
 	captchaInputs [captchaLength]ui.Handle

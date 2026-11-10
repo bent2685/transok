@@ -516,3 +516,53 @@ func HomeDropRelease() string { return In(i18n.Locale()).HomeDropRelease() }
 func (msgs Messages) HomeDropRelease() string {
 	return Catalog.Format(msgs.locale, "homeDropRelease", nil)
 }
+
+// ShareTitle says "Share Links"
+// in the language the app shows.
+func ShareTitle() string { return In(i18n.Locale()).ShareTitle() }
+
+// ShareTitle says "Share Links"
+// in the language of msgs.
+func (msgs Messages) ShareTitle() string {
+	return Catalog.Format(msgs.locale, "shareTitle", nil)
+}
+
+// ShareDesc says "Tap an address to copy"
+// in the language the app shows.
+func ShareDesc() string { return In(i18n.Locale()).ShareDesc() }
+
+// ShareDesc says "Tap an address to copy"
+// in the language of msgs.
+func (msgs Messages) ShareDesc() string {
+	return Catalog.Format(msgs.locale, "shareDesc", nil)
+}
+
+// ShareEmpty says "Start sharing to get a link"
+// in the language the app shows.
+func ShareEmpty() string { return In(i18n.Locale()).ShareEmpty() }
+
+// ShareEmpty says "Start sharing to get a link"
+// in the language of msgs.
+func (msgs Messages) ShareEmpty() string {
+	return Catalog.Format(msgs.locale, "shareEmpty", nil)
+}
+
+// ShareCopied says "Copied"
+// in the language the app shows.
+func ShareCopied() string { return In(i18n.Locale()).ShareCopied() }
+
+// ShareCopied says "Copied"
+// in the language of msgs.
+func (msgs Messages) ShareCopied() string {
+	return Catalog.Format(msgs.locale, "shareCopied", nil)
+}
+
+// ShareSeeAll says "View all"
+// in the language the app shows.
+func ShareSeeAll() string { return In(i18n.Locale()).ShareSeeAll() }
+
+// ShareSeeAll says "View all"
+// in the language of msgs.
+func (msgs Messages) ShareSeeAll() string {
+	return Catalog.Format(msgs.locale, "shareSeeAll", nil)
+}

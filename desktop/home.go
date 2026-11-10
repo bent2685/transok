@@ -90,6 +90,7 @@ func (a *App) home(c *ui.Context) {
 	// 弹窗常驻构建，关闭时靠 Exit 动画退场。
 	a.noteDrawer(c, p)
 	a.pureTextDrawer(c, p)
+	a.shareDrawer(c, p)
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {
@@ -108,14 +109,7 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 		})
 		glassGroup(c, p).Children(func() {
 			glassSegment(c, p, "device-desktop-search", func() { a.page = discoverRoute })
-			glassSegment(c, p, "lock", func() {
-				a.captchaDigits = make([]string, captchaLength)
-				for i := 0; i < len(a.captcha) && i < captchaLength; i++ {
-					a.captchaDigits[i] = string(a.captcha[i])
-				}
-				a.focusReset = true
-				a.captchaOpen = true
-			})
+			glassSegment(c, p, "share", func() { a.shareOpen = true })
 			glassSegment(c, p, "settings", func() { a.page = settingsRoute })
 		})
 	})
@@ -170,6 +164,7 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 			}
 		})
 		glassGroup(c, p).Children(func() {
+			glassChip(c, p, "lock", "", a.openCaptcha)
 			glassChip(c, p, "text-plus", "", a.addPureText)
 			if len(a.files) > 0 {
 				glassChip(c, p, "trash", "", a.clearFiles)

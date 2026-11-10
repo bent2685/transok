@@ -55,5 +55,10 @@
   "homeTextTitleLabel": "Title",
   "homeTextContentLabel": "Content",
   "homeNoteLabel": "Note",
-  "homeDropRelease": "Release to add"
+  "homeDropRelease": "Release to add",
+  "shareTitle": "Share Links",
+  "shareDesc": "Tap an address to copy",
+  "shareEmpty": "Start sharing to get a link",
+  "shareCopied": "Copied",
+  "shareSeeAll": "View all"
 }

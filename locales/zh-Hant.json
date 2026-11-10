@@ -47,5 +47,10 @@
   "homeTextTitleLabel": "標題",
   "homeTextContentLabel": "內容",
   "homeNoteLabel": "備註",
-  "homeDropRelease": "放開即可新增"
+  "homeDropRelease": "放開即可新增",
+  "shareTitle": "分享連結",
+  "shareDesc": "點擊地址即可複製",
+  "shareEmpty": "開始分享後這裡會顯示連結",
+  "shareCopied": "已複製",
+  "shareSeeAll": "查看全部"
 }

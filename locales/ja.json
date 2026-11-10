@@ -47,5 +47,10 @@
   "homeTextTitleLabel": "タイトル",
   "homeTextContentLabel": "内容",
   "homeNoteLabel": "メモ",
-  "homeDropRelease": "離して追加"
+  "homeDropRelease": "離して追加",
+  "shareTitle": "共有リンク",
+  "shareDesc": "アドレスをタップしてコピー",
+  "shareEmpty": "共有を開始するとリンクが表示されます",
+  "shareCopied": "コピーしました",
+  "shareSeeAll": "すべて見る"
 }
