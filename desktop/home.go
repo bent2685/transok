@@ -95,17 +95,18 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 func (a *App) dropArea(c *ui.Context, p Palette) {
 	// 整块都能点，点了直接开系统的多选文件对话框；文件夹拖进来即可。
 	area := ui.ButtonBase(c).Height(96).Padding(0, 16).Radius(12).Gap(12).
-		Background(p.Surface).Border(1, p.Border).Cursor(ui.CursorPointer).
+		Background(p.Surface).BorderWidth(1).BorderStyle(ui.BorderDashed).
+		BorderColor(p.Border).Cursor(ui.CursorPointer).
 		OnClick(func() { a.addPaths(services.File().SelectFiles()) })
 	if area.Hovered() {
-		area.Border(1, ui.RGBA(124, 126, 44, 0.4))
+		area.BorderColor(ui.RGBA(124, 126, 44, 0.45))
 	}
 
 	if paths := area.DroppedFiles(); len(paths) > 0 {
 		a.addPaths(paths)
 	}
 	if area.FileDragOver() {
-		area.Border(1, p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
+		area.BorderColor(p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
 	}
 
 	area.Children(func() {
