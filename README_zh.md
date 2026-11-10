@@ -1,15 +1,15 @@
 <div align="center">
-  <img src="https://github.com/bent2685/transok-wails/blob/main/readme_assets/banner.png" alt="banner" />
+  <img src="https://github.com/bent2685/transok/blob/main/readme_assets/banner.png" alt="banner" />
 </div>
 
-<h4 align="center"><a href="https://github.com/bent2685/transok-wails/blob/main/README.md">English</a> | <strong>简体中文</strong></h4>
+<h4 align="center"><a href="https://github.com/bent2685/transok/blob/main/README.md">English</a> | <strong>简体中文</strong></h4>
 
 <div align="center">
 
 ![go][go-badge]
 ![ts][ts-badge]
 ![license][license-badge]
-![download](https://img.shields.io/github/downloads/bent2685/transok-wails/total)
+![download](https://img.shields.io/github/downloads/bent2685/transok/total)
 
 </div>
 
@@ -49,8 +49,8 @@
 
 # Preview
 
-![preview](https://github.com/bent2685/transok-wails/blob/main/readme_assets/preview1.jpg)
-![preview](https://github.com/bent2685/transok-wails/blob/main/readme_assets/preview2.jpg)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview1.jpg)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview2.jpg)
 
 ---
 
@@ -58,7 +58,7 @@
 
 感谢以下贡献者让这个项目变得更好：
 
-- [@404errorg6](https://github.com/404errorg6) (Fahad Khan) —— 使用 `betamos/zeroconf` 重写了局域网设备发现服务（[#32](https://github.com/bent2685/transok-wails/pull/32)，修复 [#6](https://github.com/bent2685/transok-wails/issues/6)）
+- [@404errorg6](https://github.com/404errorg6) (Fahad Khan) —— 使用 `betamos/zeroconf` 重写了局域网设备发现服务（[#32](https://github.com/bent2685/transok/pull/32)，修复 [#6](https://github.com/bent2685/transok/issues/6)）
 
 ---
 
@@ -66,7 +66,7 @@
 
 ☕ 如果这个项目对你有帮助，为什么不请我喝杯咖啡呢？这将激励我继续开发。
 
-<img src="https://github.com/bent2685/transok-wails/blob/main/readme_assets/sponsor.jpeg" alt="wechat" width="200" />
+<img src="https://github.com/bent2685/transok/blob/main/readme_assets/sponsor.jpeg" alt="wechat" width="200" />
 
 ---
 
@@ -74,6 +74,6 @@
 
 [MIT](/LICENSE)
 
-[go-badge]: https://img.shields.io/github/go-mod/go-version/bent2685/transok-wails
+[go-badge]: https://img.shields.io/github/go-mod/go-version/bent2685/transok
 [ts-badge]: https://badgen.net/badge/-/TypeScript/blue?icon=typescript&label
-[license-badge]: https://img.shields.io/github/license/bent2685/transok-wails
+[license-badge]: https://img.shields.io/github/license/bent2685/transok

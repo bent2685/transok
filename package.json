@@ -1,5 +1,5 @@
 {
-  "name": "transok-wails-monorepo",
+  "name": "transok",
   "private": true,
   "scripts": {
     "dash:install": "pnpm -F transok-download install",

@@ -125,8 +125,8 @@ const Settings: React.FC = () => {
       node: (
         <div
           className="text-text2 font-900 select-none cursor-pointer hover:(text-pri underline)"
-          onClick={() => BrowserOpenURL('https://github.com/bent2685/transok-wails')}>
-          transok-wails
+          onClick={() => BrowserOpenURL('https://github.com/bent2685/transok')}>
+          transok
         </div>
       )
     }
