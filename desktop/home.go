@@ -95,8 +95,14 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 
 // dropArea 接住从系统拖进来的文件与文件夹，也提供选择入口。
 func (a *App) dropArea(c *ui.Context, p Palette) {
-	area := ui.Column(c).Height(180).Radius(10).Center().Gap(12).
-		Background(p.Surface).BorderWidth(1).BorderStyle(ui.BorderDashed).BorderColor(p.Border)
+	// 整块都能点：点哪儿都弹出选择文件/文件夹的菜单。
+	area := ui.ButtonBase(c).Height(124).Radius(10).Center().Gap(9).
+		Background(p.Surface).BorderWidth(1).BorderStyle(ui.BorderDashed).
+		BorderColor(p.Border).Cursor(ui.CursorPointer).
+		OnClick(func() { a.uploadMenu = !a.uploadMenu })
+	if area.Hovered() {
+		area.BorderColor(ui.RGBA(124, 126, 44, 0.45))
+	}
 
 	if paths := area.DroppedFiles(); len(paths) > 0 {
 		a.addPaths(paths)
@@ -106,30 +112,29 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 	}
 
 	area.Children(func() {
-		tile := ui.Column(c).Size(48, 48).Radius(12).Center().Background(p.Accent)
-		tile.Shadow(0, 6, 18, 0, ui.RGBA(124, 126, 44, 0.45))
+		tile := ui.Column(c).Size(38, 38).Radius(10).Center().Background(p.Accent)
+		tile.Shadow(0, 5, 14, 0, ui.RGBA(124, 126, 44, 0.4))
 		tile.Children(func() {
-			ui.Icon(c, icon("upload")).FontSize(26).TextColor(p.AccentText)
+			ui.Icon(c, icon("upload")).FontSize(21).TextColor(p.AccentText)
 		})
 
-		ui.Text(c, locales.HomeDropHint()).FontSize(13.5).TextColor(p.Subtle)
+		ui.Text(c, locales.HomeDropHint()).FontSize(12.5).TextColor(p.Subtle)
 
-		button := ui.ButtonBase(c).Height(38).Padding(0, 20).Radius(8).
-			Background(p.Accent).Cursor(ui.CursorPointer).OnClick(func() {
-			a.uploadMenu = !a.uploadMenu
-		})
-		if button.Hovered() {
-			button.Background(ui.Hex("#8b8d38"))
+		// 视觉上的按钮，点击交给外层的整块区域。
+		pill := ui.Row(c).Height(32).Padding(0, 16).Radius(8).PassThrough().
+			Background(p.Accent)
+		if area.Hovered() {
+			pill.Background(ui.Hex("#8b8d38"))
 		}
-		button.Children(func() {
+		pill.Children(func() {
 			ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-				ui.Icon(c, icon("plus")).FontSize(16).TextColor(p.AccentText)
-				ui.Text(c, locales.HomeUploadButton()).FontSize(13).FontWeight(600).
+				ui.Icon(c, icon("plus")).FontSize(14).TextColor(p.AccentText)
+				ui.Text(c, locales.HomeUploadButton()).FontSize(12.5).FontWeight(600).
 					TextColor(p.AccentText).SingleLine()
 			})
 		})
 
-		ui.Popover(c, button, &a.uploadMenu, func() {
+		ui.Popover(c, area, &a.uploadMenu, func() {
 			ui.Button(c, locales.HomeSelectFile()).OnClick(func() {
 				a.uploadMenu = false
 				a.addPaths(services.File().SelectFiles())
