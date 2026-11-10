@@ -13,44 +13,42 @@ import (
 	"github.com/google/uuid"
 )
 
+// homeHeaderHeight 是标题区预留的高度：内容从这里开始，标题绝对定位在上面。
+const homeHeaderHeight float32 = 70
+
 func (a *App) home(c *ui.Context) {
 	p := a.palette()
 
-	ui.Column(c).Fill().Padding(0, 16, 0, 16).Children(func() {
-		// 标题区吸顶：只量它的下沿，下面的滚动区从这里开始。
-		ui.Column(c).Bind(&a.headerBar).Children(func() {
-			a.homeHeader(c, p)
+	// 内容整页滚动，顶部留出比标题更高的边距，滚上来的内容会沉到标题下方。
+	ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
+		ui.Column(c).FillWidth().Padding(homeHeaderHeight, 16, 0, 16).Children(func() {
+			a.dropArea(c, p)
+			spacer(c, 18)
+			a.filesHeader(c, p)
 			spacer(c, 14)
+			a.filesList(c, p)
 		})
-		if b := a.headerBar.Bounds(c); b.H > 0 {
-			a.headerBottom = b.Y + b.H
-		}
-
-		ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
-			// 顶部留一点空，内容滚上来时先经过渐隐带，不会一上来就被压住边。
-			ui.Column(c).FillWidth().Padding(10, 0, 0, 0).Children(func() {
-				a.dropArea(c, p)
-				spacer(c, 18)
-				a.filesHeader(c, p)
-				spacer(c, 14)
-				a.filesList(c, p)
-			})
-			spacer(c, 130)
-		})
+		spacer(c, 130)
 	})
 
-	// 顶部渐隐：内容滚到标题下方时被吃掉，和底部那层对称。
+	// 标题绝对定位在最上层，容器本身是一层从实心到透明的渐变，
+	// 内容滚过时就像沉进背景里。
 	ui.Overlay(c, func() {
-		if a.headerBottom > 0 {
-			// 只压在滚动区上沿，不越界到标题区，否则会盖住副标题。
-			top := ui.Box(c).Absolute().Left(0).Right(0).
-				Top(a.headerBottom).Height(34).PassThrough()
-			top.LinearGradient(ui.LinearGradient{Angle: 180, Stops: []ui.GradientStop{
-				{Color: withAlpha(p.Canvas, 1), At: 0},
-				{Color: withAlpha(p.Canvas, 0.55), At: 0.5},
-				{Color: withAlpha(p.Canvas, 0), At: 1},
-			}})
-		}
+		band := ui.Column(c).Absolute().Left(0).Right(0).Top(0).
+			Height(homeHeaderHeight + 26)
+		band.LinearGradient(ui.LinearGradient{Angle: 180, Stops: []ui.GradientStop{
+			{Color: withAlpha(p.Canvas, 1), At: 0},
+			{Color: withAlpha(p.Canvas, 1), At: 0.72},
+			{Color: withAlpha(p.Canvas, 0), At: 1},
+		}})
+		band.Children(func() {
+			ui.Column(c).FillWidth().Padding(0, 16).Children(func() {
+				if c.TitleBar().Height > 0 {
+					ui.Box(c).FillWidth().Height(a.titleBarStrip(c)).DragWindow()
+				}
+				a.homeHeader(c, p)
+			})
+		})
 	})
 
 	ui.Overlay(c, func() {

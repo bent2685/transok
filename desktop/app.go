@@ -28,13 +28,11 @@ type App struct {
 	themeInit bool
 	page      route
 
-	appInfo      map[string]string
-	headerBar    ui.Handle
-	headerBottom float32
-	port         string
-	device       string
-	captcha      string
-	language     string
+	appInfo  map[string]string
+	port     string
+	device   string
+	captcha  string
+	language string
 
 	files []services.FileInfo
 	share bool
