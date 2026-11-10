@@ -9,6 +9,7 @@ import (
 	"transok/locales"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/google/uuid"
 )
 
 func (a *App) home(c *ui.Context) {
@@ -413,17 +414,14 @@ func (a *App) pureTextDrawer(c *ui.Context, p Palette) {
 
 // openTextDrawer 把条目的标题与内容读进草稿，改完点确认才写回。
 func (a *App) openTextDrawer(f services.FileInfo) {
-	a.textID, a.textName, a.textDraft = f.Id, f.Name, f.Text
+	a.textID, a.textNew, a.textName, a.textDraft = f.Id, false, f.Name, f.Text
 	a.textOpen = true
 }
 
+// addPureText 只是打开一个空白抽屉：确认时才真正落成条目，取消就什么都不留。
 func (a *App) addPureText() {
-	id := fmt.Sprintf("text-%d", len(a.files)+1)
-	a.files = append(a.files, services.FileInfo{
-		Id: id, Path: id, Type: "pure-text",
-	})
-	services.Storage().Set("share-list", a.files)
-	a.textID, a.textName, a.textDraft, a.textOpen = id, "", "", true
+	a.textID, a.textNew, a.textName, a.textDraft = "", true, "", ""
+	a.textOpen = true
 }
 
 // addPaths 把选中的路径变成分享项，去重后写回存储。
@@ -489,10 +487,23 @@ func (a *App) saveNote() {
 }
 
 func (a *App) saveText() {
-	for i := range a.files {
-		if a.files[i].Id == a.textID {
-			a.files[i].Name = a.textName
-			a.files[i].Text = a.textDraft
+	if a.textNew && a.textName == "" && a.textDraft == "" {
+		// 什么都没填就点确认，等于取消。
+		a.textNew, a.textOpen = false, false
+		return
+	}
+	if a.textNew {
+		id := uuid.NewString()
+		a.files = append(a.files, services.FileInfo{
+			Id: id, Path: id, Type: "pure-text", Name: a.textName, Text: a.textDraft,
+		})
+		a.textNew = false
+	} else {
+		for i := range a.files {
+			if a.files[i].Id == a.textID {
+				a.files[i].Name = a.textName
+				a.files[i].Text = a.textDraft
+			}
 		}
 	}
 	a.textOpen = false

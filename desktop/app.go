@@ -54,6 +54,7 @@ type App struct {
 	noteInput ui.Handle
 
 	textOpen    bool
+	textNew     bool
 	textID      string
 	textName    string
 	textDraft   string

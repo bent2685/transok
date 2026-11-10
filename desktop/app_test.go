@@ -89,3 +89,33 @@ func TestJoinCode(t *testing.T) {
 		t.Errorf("code %q, want 1245", got)
 	}
 }
+
+func TestPureTextCreatedOnlyOnConfirm(t *testing.T) {
+	app := newTestApp()
+
+	app.addPureText()
+	if len(app.files) != 0 {
+		t.Fatalf("files %d after opening the drawer, want 0", len(app.files))
+	}
+
+	// 取消：什么都不留
+	app.textOpen = false
+	app.textNew = false
+	if len(app.files) != 0 {
+		t.Fatalf("files %d after canceling, want 0", len(app.files))
+	}
+
+	// 确认：落成一条
+	app.addPureText()
+	app.textName, app.textDraft = "标题", "正文"
+	app.saveText()
+	if len(app.files) != 1 {
+		t.Fatalf("files %d after confirming, want 1", len(app.files))
+	}
+	if got := app.files[0]; got.Name != "标题" || got.Text != "正文" || got.Type != "pure-text" {
+		t.Errorf("item %+v", got)
+	}
+	if app.files[0].Id == "" {
+		t.Error("id is empty")
+	}
+}
