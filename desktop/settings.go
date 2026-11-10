@@ -100,7 +100,7 @@ func (a *App) valueRow(c *ui.Context, p Palette, iconName, label, value string) 
 
 func (a *App) portRow(c *ui.Context, p Palette) {
 	row := a.row(c, p, "plug", locales.SettingsPort(), func() {
-		input := a.fieldInput(c, p, "port", &a.port, 76)
+		input := a.fieldInput(c, p, "port", &a.port, controlWidth)
 		input.OnSubmit(func() { services.Storage().Set("port", a.port) })
 		if input.Changed() {
 			services.Storage().Set("port", a.port)
@@ -112,7 +112,7 @@ func (a *App) portRow(c *ui.Context, p Palette) {
 // deviceRow 让设备名就地在输入框里改，改完写回存储，mDNS 广播读的就是它。
 func (a *App) deviceRow(c *ui.Context, p Palette) {
 	row := a.row(c, p, "device-laptop", locales.SettingsDeviceName(), func() {
-		input := a.fieldInput(c, p, "device", &a.device, 132)
+		input := a.fieldInput(c, p, "device", &a.device, controlWidth)
 		input.OnSubmit(func() { services.Storage().Set("uname", a.device) })
 		if input.Changed() {
 			services.Storage().Set("uname", a.device)
@@ -120,6 +120,9 @@ func (a *App) deviceRow(c *ui.Context, p Palette) {
 	})
 	rowHover(row, p)
 }
+
+// controlWidth 是每行右侧操作区的统一宽度，三个控件对齐成一条竖线。
+const controlWidth float32 = 168
 
 // fieldInput 是行右侧那种小输入框，一眼能看出可以改。
 func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, width float32) ui.Element {
@@ -135,8 +138,9 @@ func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, wi
 func (a *App) languageRow(c *ui.Context, p Palette) {
 	row := a.row(c, p, "language", locales.SettingsLanguage(), func() {
 		sel := ui.SelectBase(c.Key("language"), &a.language)
-		sel.Trigger.Height(30).Padding(0, 10).Radius(8).Gap(6).AlignItems(ui.Center).
-			Background(p.Canvas).Border(1, p.Border).Cursor(ui.CursorPointer)
+		sel.Trigger.Width(controlWidth).Height(30).Padding(0, 10).Radius(8).Gap(6).
+			AlignItems(ui.Center).Background(p.Canvas).Border(1, p.Border).
+			Cursor(ui.CursorPointer)
 		sel.Trigger.Children(func() {
 			ui.Text(c, i18n.Autonym(a.language)).FontSize(13).SingleLine()
 			ui.Icon(c, icon("chevron-down")).FontSize(14).TextColor(p.Muted)
