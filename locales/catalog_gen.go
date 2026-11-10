@@ -496,3 +496,13 @@ func HomeTextContentLabel() string { return In(i18n.Locale()).HomeTextContentLab
 func (msgs Messages) HomeTextContentLabel() string {
 	return Catalog.Format(msgs.locale, "homeTextContentLabel", nil)
 }
+
+// HomeNoteLabel says "Note"
+// in the language the app shows.
+func HomeNoteLabel() string { return In(i18n.Locale()).HomeNoteLabel() }
+
+// HomeNoteLabel says "Note"
+// in the language of msgs.
+func (msgs Messages) HomeNoteLabel() string {
+	return Catalog.Format(msgs.locale, "homeNoteLabel", nil)
+}

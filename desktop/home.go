@@ -360,12 +360,16 @@ func boolFloat(b bool) float32 {
 
 func (a *App) noteDrawer(c *ui.Context, p Palette) {
 	a.drawer(c, p, &a.noteOpen, drawerSpec{
-		icon:        "message-plus",
-		title:       locales.HomeNoteTitle(),
-		description: locales.HomeNotePlaceholder(),
+		icon:  "message-plus",
+		title: locales.HomeNoteTitle(),
 		body: func() {
-			ui.TextInput(c.Key("note"), &a.noteDraft).
-				FillWidth().AutoFocus().OnSubmit(func() { a.saveNote() })
+			labeledField(c, p, locales.HomeNoteLabel(), a.noteInput.FocusWithin(c), func() {
+				ui.TextInput(c.Key("note"), &a.noteDraft).Bind(&a.noteInput).
+					FillWidth().FontSize(13).Padding(0).
+					Background(ui.Transparent).BorderWidth(0).
+					Placeholder(locales.HomeNotePlaceholder()).AutoFocus().
+					OnSubmit(func() { a.saveNote() })
+			})
 		},
 		footer: func() {
 			ui.Spacer(c).Grow(1)

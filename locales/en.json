@@ -50,5 +50,6 @@
   "homeEmptyTitle": "Nothing here yet",
   "homeEmptyHint": "Drag files or folders here",
   "homeTextTitleLabel": "Title",
-  "homeTextContentLabel": "Content"
+  "homeTextContentLabel": "Content",
+  "homeNoteLabel": "Note"
 }

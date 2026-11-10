@@ -45,5 +45,6 @@
   "homeEmptyTitle": "まだ何もありません",
   "homeEmptyHint": "ファイルやフォルダをここにドラッグ",
   "homeTextTitleLabel": "タイトル",
-  "homeTextContentLabel": "内容"
+  "homeTextContentLabel": "内容",
+  "homeNoteLabel": "メモ"
 }

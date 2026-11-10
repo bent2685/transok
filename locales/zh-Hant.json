@@ -45,5 +45,6 @@
   "homeEmptyTitle": "尚無內容",
   "homeEmptyHint": "將檔案或資料夾拖曳到這裡",
   "homeTextTitleLabel": "標題",
-  "homeTextContentLabel": "內容"
+  "homeTextContentLabel": "內容",
+  "homeNoteLabel": "備註"
 }
