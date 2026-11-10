@@ -1,26 +1,25 @@
 # Development Guide
 
-This is a Wails project using the App Router architecture.
+This is a Go desktop app built with MyGo's native UI.
 
 You **MUST** absolutely obey this guide.
 
 You need to communicate with the user in Chinese.
 
-> 迁移中：`feat/mygo-native` 分支正在把桌面端从 Wails + WebView 换成 MyGo native UI。迁移期间以本文档下方「MyGo 迁移」一节为准，两边冲突时该节优先。
+> 客户端已从 Wails + WebView 换到 MyGo native UI：`frontend/`、`wails.json`、`build/` 里的 Wails 产物均已删除。当前视觉是对迁移前 Web 端的 1:1 还原。
 
 ---
 
 ## Tech Stack
-- Golang
-- react+vite+unocss（迁移完成后移除）
-- wails GUI（迁移完成后移除）
-- MyGo native UI（`github.com/egoist/mygo`，目标形态）
+- Golang 1.27.3+
+- MyGo native UI（`github.com/egoist/mygo`，`go tool mygo`）
+- gin + 浏览器下载页（给被分享方，与客户端 UI 无关）
 
 ---
 
-## MyGo 迁移（进行中）
+## MyGo native UI 约定
 
-目标形态：客户端全部窗口用 MyGo native UI（Go 绘制，无 WebView、无 HTML/CSS/JS），Wails 与 `frontend/` 一并移除。HTTP 下载页（`backend/app` 的 gin + `templates/downpage`）与 `dash/` 是给被分享方的浏览器页面，不在此次迁移范围。
+客户端全部窗口用 MyGo native UI（Go 绘制，无 WebView、无 HTML/CSS/JS）。HTTP 下载页（`backend/app` 的 gin + `templates/downpage`）与 `dash/` 是给被分享方的浏览器页面，不属于客户端 UI。
 
 - Go 版本要求 1.27.3+（`go.mod` 已抬升）。
 - CLI 以 tool 形式钉住：`go tool mygo`（v0.8.3），不要另装全局版本。

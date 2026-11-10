@@ -2,7 +2,7 @@
 // Single source of truth for the project version is the VERSION file at the
 // repo root. This script either:
 //   - writes a new version to VERSION (when an argument is given), or
-//   - syncs the current VERSION value out to wails.json and default_conf.go.
+//   - syncs the current VERSION value out to mygo.json and default_conf.go.
 //
 // Usage:
 //   node scripts/set-version.mjs 0.4.9   # bump to 0.4.9 and sync
@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const VERSION_FILE = join(ROOT, 'VERSION')
-const WAILS_JSON = join(ROOT, 'wails.json')
+const MYGO_JSON = join(ROOT, 'mygo.json')
 const GO_CONF = join(ROOT, 'backend/consts/default_conf.go')
 
 const arg = process.argv[2]
@@ -43,9 +43,9 @@ if (!version) {
   process.exit(1)
 }
 
-const wailsRaw = readFileSync(WAILS_JSON, 'utf8')
-const wailsData = JSON.parse(wailsRaw)
-const wailsCurrent = wailsData.info.productVersion
+const mygoRaw = readFileSync(MYGO_JSON, 'utf8')
+const mygoData = JSON.parse(mygoRaw)
+const mygoCurrent = mygoData.version
 
 const goSrc = readFileSync(GO_CONF, 'utf8')
 const goVersionRe = /("version":\s*)"([^"]*)"/
@@ -59,10 +59,10 @@ const goCurrent = goMatch[2]
 if (mode === 'check') {
   let ok = true
   const drift = (cur) => cur === version ? '' : '   <- DRIFT'
-  if (wailsCurrent !== version) ok = false
+  if (mygoCurrent !== version) ok = false
   if (goCurrent !== version) ok = false
   console.log(`VERSION         ${version}`)
-  console.log(`wails.json      ${wailsCurrent}${drift(wailsCurrent)}`)
+  console.log(`mygo.json       ${mygoCurrent}${drift(mygoCurrent)}`)
   console.log(`default_conf.go ${goCurrent}${drift(goCurrent)}`)
   if (!ok) {
     console.log('\nfix with: pnpm version:set')
@@ -71,11 +71,11 @@ if (mode === 'check') {
   process.exit(0)
 }
 
-wailsData.info.productVersion = version
-writeFileSync(WAILS_JSON, JSON.stringify(wailsData, null, 2) + '\n')
+mygoData.version = version
+writeFileSync(MYGO_JSON, JSON.stringify(mygoData, null, 2) + '\n')
 
 writeFileSync(GO_CONF, goSrc.replace(goVersionRe, `$1"${version}"`))
 
 console.log(`synced version ${version} ->`)
-console.log(`  ${WAILS_JSON}`)
+console.log(`  ${MYGO_JSON}`)
 console.log(`  ${GO_CONF}`)

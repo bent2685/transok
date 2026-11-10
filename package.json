@@ -9,11 +9,8 @@
     "build:dash": "bash scripts/build-dash.sh",
     "version:set": "node scripts/set-version.mjs",
     "version:check": "node scripts/set-version.mjs --check",
-    "frontend:install": "cd frontend && npm install",
-    "frontend:dev": "cd frontend && npm run dev",
-    "frontend:build": "cd frontend && npm run build",
-    "wails:dev": "wails dev",
-    "wails:build": "wails build"
+    "app:dev": "go tool mygo dev",
+    "app:build": "go tool mygo build"
   },
   "devDependencies": {
     "esbuild": "0.28.0"

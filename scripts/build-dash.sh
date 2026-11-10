@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the dash (download page) source and emit the artifacts into
 # backend/app/templates/downpage so `go:embed` picks them up on the next
-# `wails build` / `go build`.
+# `go build`.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

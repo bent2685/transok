@@ -2,8 +2,7 @@ package desktop
 
 import "github.com/egoist/mygo/ui"
 
-// Palette 是 Web 端 CSS 变量的 Go 版，取值来自
-// frontend/src/assets/styles/base.scss。
+// Palette 是原 Web 端 CSS 变量（base.scss）的 Go 版，深浅两套共用同一个橄榄主色。
 type Palette struct {
 	Dark         bool
 	Canvas       ui.Color
