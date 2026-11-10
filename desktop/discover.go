@@ -8,7 +8,6 @@ import (
 	"transok/backend/utils/mdns/handlers"
 	"transok/locales"
 
-	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -75,14 +74,26 @@ func (a *App) allURLs(c *ui.Context) {
 
 		ui.Column(c).Gap(8).Children(func() {
 			for _, url := range urls {
-				row := ui.Row(c).Padding(11, 12).Gap(8).Radius(10).AlignItems(ui.Center).
-					Background(p.Surface).Border(1, p.Border).Cursor(ui.CursorPointer)
-				if row.Hovered() {
+				copied := a.copiedRecently(c, url)
+				row := ui.ButtonBase(c).FillWidth().Padding(11, 12).Gap(8).Radius(10).
+					AlignItems(ui.Center).Justify(ui.Start).Background(p.Surface).
+					Border(1, p.Border).Cursor(ui.CursorPointer).
+					OnClick(func() { a.copyURL(url) })
+				if row.Hovered() || copied {
 					row.Border(1, ui.RGBA(124, 126, 44, 0.45))
 				}
-				row.OnClick(func() { mygo.Clipboard.WriteText(url) })
+				if copied {
+					row.Background(ui.RGBA(124, 126, 44, 0.12))
+				}
 				row.Children(func() {
 					ui.Text(c, url).Grow(1).FontSize(12.5).Font("monospace").SingleLine()
+					if copied {
+						ui.Row(c).Gap(4).AlignItems(ui.Center).Children(func() {
+							ui.Icon(c, icon("check")).FontSize(14).TextColor(p.Accent)
+							ui.Text(c, locales.ShareCopied()).FontSize(11.5).TextColor(p.Accent)
+						})
+						return
+					}
 					ui.Icon(c, icon("copy")).FontSize(15).TextColor(p.Muted)
 				})
 			}

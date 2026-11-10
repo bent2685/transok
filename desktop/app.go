@@ -28,12 +28,14 @@ type App struct {
 	themeInit bool
 	page      route
 
-	appInfo  map[string]string
-	scroll   ui.ScrollState
-	port     string
-	device   string
-	captcha  string
-	language string
+	appInfo   map[string]string
+	copiedURL string
+	copiedAt  time.Time
+	scroll    ui.ScrollState
+	port      string
+	device    string
+	captcha   string
+	language  string
 
 	files []services.FileInfo
 	share bool
