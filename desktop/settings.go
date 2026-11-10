@@ -41,12 +41,12 @@ func (a *App) settings(c *ui.Context) {
 			a.valueRow(c, p, "mail", locales.SettingsEmail(), a.appInfo["email"])
 			divider(c, p)
 
-			g := ui.Row(c).Gap(12).AlignItems(ui.Center).Padding(11, 0).Height(48).
+			g := ui.Row(c).Gap(12).AlignItems(ui.Center).Padding(11, 14).Height(48).
 				Cursor(ui.CursorPointer).OnClick(func() {
 				mygo.Shell.OpenExternal("https://github.com/bent2685/transok")
 			})
 			if g.Hovered() {
-				g.Background(ui.RGBA(255, 255, 255, 0.03))
+				g.Background(glassLift(p, 0.06))
 			}
 			g.Children(func() {
 				ui.Icon(c, icon("brand-github")).FontSize(17).TextColor(p.Text)
@@ -73,7 +73,7 @@ func dragHeader(c *ui.Context, p Palette, title string, back func()) {
 
 // row 是卡片里的一行：图标 + 标题 + 右侧内容。
 func (a *App) row(c *ui.Context, p Palette, iconName, label string, trailing func()) ui.Element {
-	row := ui.Row(c).Gap(12).AlignItems(ui.Center).Padding(11, 0).Height(48)
+	row := ui.Row(c).Gap(12).AlignItems(ui.Center).Padding(11, 14).Height(48)
 	row.Children(func() {
 		ui.Icon(c, icon(iconName)).FontSize(17).TextColor(p.Text)
 		ui.Text(c, label).Grow(1).FontSize(13.5).FontWeight(700).SingleLine()
@@ -84,6 +84,14 @@ func (a *App) row(c *ui.Context, p Palette, iconName, label string, trailing fun
 	return row
 }
 
+// rowHover 只给能点的行加悬停底色，纯展示的行不加。
+func rowHover(row ui.Element, p Palette) ui.Element {
+	if row.Hovered() {
+		row.Background(glassLift(p, 0.06))
+	}
+	return row
+}
+
 func (a *App) valueRow(c *ui.Context, p Palette, iconName, label, value string) ui.Element {
 	return a.row(c, p, iconName, label, func() {
 		ui.Text(c, value).FontSize(13).TextColor(p.Text).SingleLine()
@@ -91,7 +99,7 @@ func (a *App) valueRow(c *ui.Context, p Palette, iconName, label, value string) 
 }
 
 func (a *App) portRow(c *ui.Context, p Palette) {
-	a.row(c, p, "plug", locales.SettingsPort(), func() {
+	row := a.row(c, p, "plug", locales.SettingsPort(), func() {
 		input := ui.TextInput(c.Key("port"), &a.port).Width(92).Height(28).Radius(6).
 			FontSize(13).TextAlign(ui.End).Padding(0, 6).
 			Background(ui.Transparent).BorderWidth(0)
@@ -99,10 +107,11 @@ func (a *App) portRow(c *ui.Context, p Palette) {
 			services.Storage().Set("port", a.port)
 		}
 	})
+	rowHover(row, p)
 }
 
 func (a *App) languageRow(c *ui.Context, p Palette) {
-	a.row(c, p, "language", locales.SettingsLanguage(), func() {
+	row := a.row(c, p, "language", locales.SettingsLanguage(), func() {
 		sel := ui.SelectBase(c.Key("language"), &a.language)
 		sel.Trigger.Height(30).Padding(0, 10).Radius(8).Gap(6).AlignItems(ui.Center).
 			Background(p.Canvas).Border(1, p.Border).Cursor(ui.CursorPointer)
@@ -124,6 +133,7 @@ func (a *App) languageRow(c *ui.Context, p Palette) {
 			}
 		})
 	})
+	rowHover(row, p)
 }
 
 func (a *App) deviceName() string {

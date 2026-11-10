@@ -138,9 +138,12 @@ func closeButton(c *ui.Context, p Palette, onClick func()) ui.Element {
 }
 
 // card 是设置页那种分组卡片，行与行之间用分割线。
+// card 是设置页那种分组卡片：横向不留 padding，行自己带内缩，
+// 这样行的悬停底色才能铺满整张卡片。
 func card(c *ui.Context, p Palette) ui.Element {
-	return ui.Column(c).Padding(2, 14).Radius(12).
-		Background(p.Surface).Border(1, p.Border)
+	return ui.Column(c).Padding(2, 0).Radius(12).
+		Background(p.Surface).Border(1, p.Border).
+		ClipInset(0, 0, 0, 0, 12)
 }
 
 func divider(c *ui.Context, p Palette) {
