@@ -52,5 +52,18 @@
   "shareDesc": "點擊地址即可複製",
   "shareEmpty": "開始分享後這裡會顯示連結",
   "shareCopied": "已複製",
-  "shareSeeAll": "查看全部"
+  "shareSeeAll": "查看全部",
+  "selectDelete": "刪除",
+  "selectAll": "全選",
+  "selectNone": "取消全選",
+  "deleteTitle": "刪除 {count} 項？",
+  "deleteDesc": "只從分享清單移除，磁碟上的檔案不會被刪。",
+  "@deleteTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
 }

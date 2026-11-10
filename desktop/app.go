@@ -43,6 +43,10 @@ type App struct {
 	deviceList  ui.ListState
 	devicesOnce sync.Once
 
+	selectMode bool
+	selected   map[string]bool
+	deleteAsk  bool
+
 	shareOpen     bool
 	captchaOpen   bool
 	captchaDigits []string
@@ -65,7 +69,11 @@ type App struct {
 
 // New 读取已持久化的状态，视图第一帧就能显示正确的内容。
 func New() *App {
-	app := &App{appInfo: services.System().GetAppInfo(), captchaDigits: make([]string, captchaLength)}
+	app := &App{
+		appInfo:       services.System().GetAppInfo(),
+		captchaDigits: make([]string, captchaLength),
+		selected:      map[string]bool{},
+	}
 
 	app.port = "9482"
 	if port, ok := services.Storage().Get("port"); ok {

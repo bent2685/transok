@@ -52,5 +52,18 @@
   "shareDesc": "アドレスをタップしてコピー",
   "shareEmpty": "共有を開始するとリンクが表示されます",
   "shareCopied": "コピーしました",
-  "shareSeeAll": "すべて見る"
+  "shareSeeAll": "すべて見る",
+  "selectDelete": "削除",
+  "selectAll": "すべて選択",
+  "selectNone": "選択を解除",
+  "deleteTitle": "{count} 件を削除しますか？",
+  "deleteDesc": "共有リストから外れるだけで、ファイル自体は残ります。",
+  "@deleteTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
 }

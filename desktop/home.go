@@ -84,6 +84,10 @@ func (a *App) home(c *ui.Context) {
 		}
 
 		ui.Row(c).Absolute().Left(0).Right(0).Bottom(26).Justify(ui.Center).Children(func() {
+			if a.selectMode {
+				a.selectBar(c, p)
+				return
+			}
 			a.shareButton(c, p)
 		})
 	})
@@ -94,6 +98,7 @@ func (a *App) home(c *ui.Context) {
 	a.noteDrawer(c, p)
 	a.pureTextDrawer(c, p)
 	a.shareDrawer(c, p)
+	a.deleteDrawer(c, p)
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {
@@ -166,11 +171,18 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 				ui.Textf(c, "(%d)", len(a.files)).FontSize(15).FontWeight(800).TextColor(p.Accent)
 			}
 		})
+		if a.selectMode {
+			glassGroup(c, p).Children(func() {
+				glassSegment(c, p, "x", a.leaveSelect)
+			})
+			return
+		}
+
 		glassGroup(c, p).Children(func() {
 			glassSegment(c, p, "lock", a.openCaptcha)
 			glassSegment(c, p, "text-plus", a.addPureText)
 			if len(a.files) > 0 {
-				glassSegment(c, p, "trash", a.clearFiles)
+				glassSegment(c, p, "trash", a.enterSelect)
 			}
 		})
 	})
@@ -207,11 +219,32 @@ func (a *App) fileRow(c *ui.Context, p Palette, i int) {
 		if body.Hovered() {
 			body.Background(p.SurfaceHover)
 		}
+		// 右键菜单：在文件管理器中打开、删除这一项。
+		body.ContextMenu(func(m *ui.Menu) {
+			show := m.Item(locales.HomeOpenInManager()).Disabled(f.Type == "pure-text")
+			if show.Chosen() {
+				services.File().OpenInFileManager(f.Path)
+			}
+			m.Separator()
+			if m.Item(locales.SelectDelete()).Chosen() {
+				a.selected = map[string]bool{f.Id: true}
+				a.deleteAsk = true
+			}
+		})
+
 		body.OnClick(func() {
+			if a.selectMode {
+				a.toggleSelected(f.Id)
+				return
+			}
 			if f.Type == "pure-text" {
 				a.openTextDrawer(f)
 			}
 		})
+		if a.selectMode && a.selected[f.Id] {
+			body.Background(ui.RGBA(124, 126, 44, 0.12))
+		}
+
 		body.Children(func() {
 			tile := ui.Column(c).Size(34, 34).Radius(8).Center().Background(p.SurfaceHover)
 			tile.Children(func() {
@@ -234,12 +267,9 @@ func (a *App) fileRow(c *ui.Context, p Palette, i int) {
 				}
 			})
 
-			if f.Type == "folder" {
-				ghostButton(c, p, "external-link", func() {
-					services.File().OpenInFileManager(f.Path)
-				})
+			if a.selectMode {
+				selectBox(c, p, a.selected[f.Id])
 			}
-			ghostButton(c, p, "trash", func() { a.removeFile(f.Id) })
 		})
 	})
 }
@@ -505,30 +535,6 @@ func (a *App) hasPath(path string) bool {
 		}
 	}
 	return false
-}
-
-func (a *App) clearFiles() {
-	a.files = nil
-	a.share = false
-	services.Storage().Set("share-list", a.files)
-	services.Storage().Set("is-share", false)
-	app.Gin().Stop()
-}
-
-func (a *App) removeFile(id string) {
-	kept := make([]services.FileInfo, 0, len(a.files))
-	for _, f := range a.files {
-		if f.Id != id {
-			kept = append(kept, f)
-		}
-	}
-	a.files = kept
-	if len(kept) == 0 {
-		a.share = false
-		services.Storage().Set("is-share", false)
-		app.Gin().Stop()
-	}
-	services.Storage().Set("share-list", a.files)
 }
 
 func (a *App) saveNote() {

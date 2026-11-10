@@ -566,3 +566,53 @@ func ShareSeeAll() string { return In(i18n.Locale()).ShareSeeAll() }
 func (msgs Messages) ShareSeeAll() string {
 	return Catalog.Format(msgs.locale, "shareSeeAll", nil)
 }
+
+// SelectDelete says "Delete"
+// in the language the app shows.
+func SelectDelete() string { return In(i18n.Locale()).SelectDelete() }
+
+// SelectDelete says "Delete"
+// in the language of msgs.
+func (msgs Messages) SelectDelete() string {
+	return Catalog.Format(msgs.locale, "selectDelete", nil)
+}
+
+// SelectAll says "Select All"
+// in the language the app shows.
+func SelectAll() string { return In(i18n.Locale()).SelectAll() }
+
+// SelectAll says "Select All"
+// in the language of msgs.
+func (msgs Messages) SelectAll() string {
+	return Catalog.Format(msgs.locale, "selectAll", nil)
+}
+
+// SelectNone says "Deselect All"
+// in the language the app shows.
+func SelectNone() string { return In(i18n.Locale()).SelectNone() }
+
+// SelectNone says "Deselect All"
+// in the language of msgs.
+func (msgs Messages) SelectNone() string {
+	return Catalog.Format(msgs.locale, "selectNone", nil)
+}
+
+// DeleteTitle says "Delete {count} items?"
+// in the language the app shows.
+func DeleteTitle(count int) string { return In(i18n.Locale()).DeleteTitle(count) }
+
+// DeleteTitle says "Delete {count} items?"
+// in the language of msgs.
+func (msgs Messages) DeleteTitle(count int) string {
+	return Catalog.Format(msgs.locale, "deleteTitle", map[string]any{"count": count})
+}
+
+// DeleteDesc says "They are removed from the share list only; the files stay on disk."
+// in the language the app shows.
+func DeleteDesc() string { return In(i18n.Locale()).DeleteDesc() }
+
+// DeleteDesc says "They are removed from the share list only; the files stay on disk."
+// in the language of msgs.
+func (msgs Messages) DeleteDesc() string {
+	return Catalog.Format(msgs.locale, "deleteDesc", nil)
+}

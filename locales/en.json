@@ -60,5 +60,18 @@
   "shareDesc": "Tap an address to copy",
   "shareEmpty": "Start sharing to get a link",
   "shareCopied": "Copied",
-  "shareSeeAll": "View all"
+  "shareSeeAll": "View all",
+  "selectDelete": "Delete",
+  "selectAll": "Select All",
+  "selectNone": "Deselect All",
+  "deleteTitle": "Delete {count} items?",
+  "deleteDesc": "They are removed from the share list only; the files stay on disk.",
+  "@deleteTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
 }

@@ -107,21 +107,6 @@ func chip(c *ui.Context, p Palette, iconName, label string, onClick func()) ui.E
 	return b
 }
 
-// ghostButton 是行尾那种无底色的图标按钮。
-func ghostButton(c *ui.Context, p Palette, name string, onClick func()) ui.Element {
-	b := ui.ButtonBase(c).Size(28, 28).Padding(0).Radius(7).
-		Cursor(ui.CursorPointer).OnClick(onClick)
-	tint := p.Muted
-	if b.Hovered() {
-		b.Background(ui.RGBA(124, 126, 44, 0.18))
-		tint = p.Accent
-	}
-	b.Children(func() {
-		ui.Icon(c, icon(name)).FontSize(15).TextColor(tint)
-	})
-	return b
-}
-
 // closeButton 是抽屉右上角的关闭键：圆形底色，悬停提亮。
 func closeButton(c *ui.Context, p Palette, onClick func()) ui.Element {
 	b := ui.ButtonBase(c).Size(28, 28).Padding(0).Radius(999).
