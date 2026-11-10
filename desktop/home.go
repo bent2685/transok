@@ -78,9 +78,9 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 			})
 			ui.Text(c, locales.HomeTitle()).FontSize(12.5).TextColor(p.Subtle)
 		})
-		ui.Row(c).Gap(6).Children(func() {
-			iconButton(c, p, "device-desktop-search", func() { a.page = discoverRoute })
-			iconButton(c, p, "lock", func() {
+		glassGroup(c, p).Children(func() {
+			glassSegment(c, p, "device-desktop-search", func() { a.page = discoverRoute })
+			glassSegment(c, p, "lock", func() {
 				a.captchaDigits = make([]string, captchaLength)
 				for i := 0; i < len(a.captcha) && i < captchaLength; i++ {
 					a.captchaDigits[i] = string(a.captcha[i])
@@ -88,7 +88,7 @@ func (a *App) homeHeader(c *ui.Context, p Palette) {
 				a.focusReset = true
 				a.captchaOpen = true
 			})
-			iconButton(c, p, "settings", func() { a.page = settingsRoute })
+			glassSegment(c, p, "settings", func() { a.page = settingsRoute })
 		})
 	})
 }
@@ -157,10 +157,10 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 				ui.Textf(c, "(%d)", len(a.files)).FontSize(15).FontWeight(800).TextColor(p.Accent)
 			}
 		})
-		ui.Row(c).Gap(6).Children(func() {
-			chip(c, p, "keyboard", locales.HomePureText(), a.addPureText)
+		glassGroup(c, p).Children(func() {
+			glassChip(c, p, "keyboard", locales.HomePureText(), a.addPureText)
 			if len(a.files) > 0 {
-				chip(c, p, "trash", "", a.clearFiles)
+				glassChip(c, p, "trash", "", a.clearFiles)
 			}
 		})
 	})

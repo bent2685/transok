@@ -1,10 +1,65 @@
 package desktop
 
-import "github.com/egoist/mygo/ui"
+import (
+	"github.com/egoist/mygo/plugins/glass"
+	"github.com/egoist/mygo/ui"
+)
 
 // 这是几个页面共用的视觉零件，尺寸对齐迁移前 Web 端的写法。
 // 需要自己控制底色边框的地方一律用 ui.ButtonBase：ui.Button 会每帧按主题
 // 重刷底色，压不住。
+
+// glassGroup 是液态玻璃风格的按钮组：整块玻璃胶囊，里面并排放按钮，
+// 悬停时只有被指到的那一格浮出一层薄光。
+func glassGroup(c *ui.Context, p Palette) ui.Element {
+	return ui.Row(c).Padding(3).Gap(2).Radius(14).Material(glass.Glass{})
+}
+
+// glassSegment 是按钮组里的一格：只放图标。
+func glassSegment(c *ui.Context, p Palette, name string, onClick func()) ui.Element {
+	b := ui.ButtonBase(c).Size(32, 32).Padding(0).Radius(11).
+		Cursor(ui.CursorPointer).OnClick(onClick)
+	glassHover(b, p)
+	b.Children(func() {
+		ui.Icon(c, icon(name)).FontSize(16).TextColor(p.Text)
+	})
+	return b
+}
+
+// glassChip 是按钮组里带文字的一格，用于操作型入口。
+func glassChip(c *ui.Context, p Palette, iconName, label string, onClick func()) ui.Element {
+	b := ui.ButtonBase(c).Height(32).Padding(0, 10).Radius(11).
+		Cursor(ui.CursorPointer).OnClick(onClick)
+	glassHover(b, p)
+	b.Children(func() {
+		ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
+			if label != "" {
+				ui.Text(c, label).FontSize(11).FontWeight(700).LetterSpacing(0.6).
+					TextColor(p.Text).SingleLine()
+			}
+			ui.Icon(c, icon(iconName)).FontSize(15).TextColor(p.Text)
+		})
+	})
+	return b
+}
+
+// glassHover 给玻璃上的按钮加上按下/悬停时那层薄光。
+func glassHover(b ui.Element, p Palette) {
+	switch {
+	case b.Pressed():
+		b.Background(glassLift(p, 0.16))
+	case b.Hovered():
+		b.Background(glassLift(p, 0.10))
+	}
+}
+
+// glassLift 是玻璃上叠的那层光：深色模式提亮，浅色模式压暗。
+func glassLift(p Palette, a float32) ui.Color {
+	if p.Dark {
+		return ui.RGBA(255, 255, 255, a)
+	}
+	return ui.RGBA(0, 0, 0, a*0.7)
+}
 
 // iconButton 是标题栏右侧那种方块图标按钮。
 func iconButton(c *ui.Context, p Palette, name string, onClick func()) ui.Element {
