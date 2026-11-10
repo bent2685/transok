@@ -29,6 +29,7 @@ type App struct {
 	page      route
 
 	appInfo  map[string]string
+	scroll   ui.ScrollState
 	port     string
 	device   string
 	captcha  string

@@ -45,23 +45,6 @@ func glassSegment(c *ui.Context, p Palette, name string, onClick func()) ui.Elem
 	return b
 }
 
-// glassChip 是按钮组里带文字的一格，用于操作型入口。
-func glassChip(c *ui.Context, p Palette, iconName, label string, onClick func()) ui.Element {
-	b := ui.ButtonBase(c).Height(32).Padding(0, 10).Radius(11).
-		Cursor(ui.CursorPointer).OnClick(onClick)
-	glassHover(b, p)
-	b.Children(func() {
-		ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
-			if label != "" {
-				ui.Text(c, label).FontSize(11).FontWeight(700).LetterSpacing(0.6).
-					TextColor(p.Text).SingleLine()
-			}
-			ui.Icon(c, icon(iconName)).FontSize(15).TextColor(p.Text)
-		})
-	})
-	return b
-}
-
 // glassHover 给玻璃上的按钮加上按下/悬停时那层薄光。
 func glassHover(b ui.Element, p Palette) {
 	switch {

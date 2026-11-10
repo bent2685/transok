@@ -20,7 +20,7 @@ func (a *App) home(c *ui.Context) {
 	p := a.palette()
 
 	// 内容整页滚动，顶部留出比标题更高的边距，滚上来的内容会沉到标题下方。
-	ui.Scroll(c).Grow(1).Scrollbars(false).Children(func() {
+	ui.Scroll(c).Grow(1).Scrollbars(false).TrackScroll(&a.scroll).Children(func() {
 		ui.Column(c).FillWidth().Padding(homeHeaderHeight, 16, 0, 16).Children(func() {
 			a.dropArea(c, p)
 			spacer(c, 18)
@@ -36,9 +36,12 @@ func (a *App) home(c *ui.Context) {
 	ui.Overlay(c, func() {
 		band := ui.Column(c).Absolute().Left(0).Right(0).Top(0).
 			Height(homeHeaderHeight + 26)
+		// 滚起来之后头部整块变实，文案不会和按钮叠在一起；回到顶部再淡回去。
+		scrolled := clamp01(a.scroll.Y / 24)
 		band.LinearGradient(ui.LinearGradient{Angle: 180, Stops: []ui.GradientStop{
 			{Color: withAlpha(p.Canvas, 1), At: 0},
-			{Color: withAlpha(p.Canvas, 1), At: 0.72},
+			{Color: withAlpha(p.Canvas, 1), At: 0.72 + 0.1*scrolled},
+			{Color: withAlpha(p.Canvas, 0.6*scrolled), At: 0.86 + 0.06*scrolled},
 			{Color: withAlpha(p.Canvas, 0), At: 1},
 		}})
 		band.Children(func() {
@@ -164,10 +167,10 @@ func (a *App) filesHeader(c *ui.Context, p Palette) {
 			}
 		})
 		glassGroup(c, p).Children(func() {
-			glassChip(c, p, "lock", "", a.openCaptcha)
-			glassChip(c, p, "text-plus", "", a.addPureText)
+			glassSegment(c, p, "lock", a.openCaptcha)
+			glassSegment(c, p, "text-plus", a.addPureText)
 			if len(a.files) > 0 {
-				glassChip(c, p, "trash", "", a.clearFiles)
+				glassSegment(c, p, "trash", a.clearFiles)
 			}
 		})
 	})
