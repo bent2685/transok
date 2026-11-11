@@ -35,9 +35,7 @@ func (a *App) settings(c *ui.Context) {
 		card(c, p).Children(func() {
 			a.valueRow(c, p, "circle-dot", locales.SettingsAppName(), a.appInfo["name"])
 			divider(c, p)
-			a.valueRow(c, p, "info-circle", locales.SettingsVersion(), a.appInfo["version"])
-			divider(c, p)
-			a.updateRow(c, p)
+			a.versionRow(c, p)
 			divider(c, p)
 			a.valueRow(c, p, "user-circle", locales.SettingsAuthor(), a.appInfo["author"])
 			divider(c, p)
@@ -138,10 +136,11 @@ func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, wi
 	return input
 }
 
-// updateRow 手动检查更新，弹出的是 updater 插件的原生更新窗口。
-func (a *App) updateRow(c *ui.Context, p Palette) {
-	row := a.row(c, p, "refresh", locales.SettingsCheckUpdate(), func() {
-		ui.Icon(c, icon("chevron-right")).FontSize(14).TextColor(p.Muted)
+// versionRow 显示版本号，点击手动检查更新，弹出的是 updater 插件的原生更新窗口。
+func (a *App) versionRow(c *ui.Context, p Palette) {
+	row := a.row(c, p, "info-circle", locales.SettingsVersion(), func() {
+		ui.Text(c, a.appInfo["version"]).FontSize(13).TextColor(p.Text).SingleLine()
+		ui.Icon(c, icon("refresh")).FontSize(14).TextColor(p.Muted)
 	})
 	row.Cursor(ui.CursorPointer).OnClick(updater.CheckForUpdates)
 	rowHover(row, p)
