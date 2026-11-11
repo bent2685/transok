@@ -80,20 +80,11 @@ jobs:
       - name: Generate update changelog
         run: node scripts/release-notes.mjs --changelog
 
-      # 过渡期（0.5.4）：0.5.3 是通用版，只会读 update-darwin-universal.json，所以这一版
-      # 额外构建 darwin/universal，仅为让它们能自动更新；通用版 dmg 不对外提供，下面删掉。
-      # 0.5.5 起去掉 darwin/universal 和删 dmg 的步骤。
-      - name: mygo build (darwin/arm64, darwin/amd64, darwin/universal) and upload
+      - name: mygo build (darwin/arm64, darwin/amd64) and upload
         env:
           GH_TOKEN: ${{ github.token }}
           MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
-        run: go tool mygo build -platform darwin/arm64,darwin/amd64,darwin/universal -upload
-
-      - name: Remove the transitional universal dmg
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.read-version.outputs.version }}
-        run: gh release delete-asset "v${VERSION}" "transok-${VERSION}.dmg" --yes
+        run: go tool mygo build -platform darwin/arm64,darwin/amd64 -upload
 
       # 修复脚本是构建后才塞进 dmg 的，mygo 上传的是不带它的版本，这里覆盖上传。
       # 更新走的是 tar.gz，不受 dmg 变化影响。
