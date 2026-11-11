@@ -19,6 +19,20 @@ jobs:
       - id: v
         run: echo "version=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_OUTPUT"
 
+      # tag 与 VERSION 不一致时，release 任务会把新产物挂到旧版本的 release 上且不报错，
+      # 所以在构建之前就拦住。
+      - name: Verify tag matches VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          ver="${{ steps.v.outputs.version }}"
+          if [ "${GITHUB_REF_NAME}" != "v${ver}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match VERSION (v${ver}). Run 'make version V=<x.y.z>' and commit before tagging."
+            exit 1
+          fi
+
+      - name: Verify version consistency
+        run: node scripts/set-version.mjs --check
+
   macos:
     name: macOS universal
     needs: read-version
@@ -51,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: transok-darwin
-          path: dist/darwin-universal/*
+          path: dist/darwin-universal/*.dmg
 
   windows:
     name: Windows amd64
@@ -83,7 +97,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: transok-windows
-          path: dist/windows-amd64/*
+          path: |
+            dist/windows-amd64/*
+            !dist/windows-amd64/icon.png
 
   release:
     name: Attach to GitHub Release
