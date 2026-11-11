@@ -19,7 +19,7 @@ DASH_SRC  := $(shell find dash/src dash/public -type f 2>/dev/null) \
 NODE_STAMP := node_modules/.install-stamp
 
 .DEFAULT_GOAL := help
-.PHONY: help install dash dash-force dash-dev dev build build-mac build-win \
+.PHONY: help install dash dash-force dash-dev dev build build-mac build-linux build-win \
         test vet fmt check version clean
 
 help: ## 显示所有命令
@@ -55,9 +55,12 @@ build: dash ## 构建当前平台，或 PLATFORM=... 指定（macOS 的 dmg 会�
 	$(MYGO) build -platform $(PLATFORM)
 	@case "$(PLATFORM)" in darwin/*) scripts/add-fix-script.sh dist/$(subst /,-,$(PLATFORM))/*.dmg ;; esac
 
-build-mac: dash ## 构建 macOS universal（.app 与 .dmg，dmg 追加「修复已损坏.command」）
-	$(MYGO) build -platform darwin/universal
-	scripts/add-fix-script.sh dist/darwin-universal/*.dmg
+build-mac: dash ## 构建 macOS arm64 与 amd64 两个包（dmg 追加「修复已损坏.command」）
+	$(MYGO) build -platform darwin/arm64,darwin/amd64
+	@for d in dist/darwin-arm64/*.dmg dist/darwin-amd64/*.dmg; do scripts/add-fix-script.sh $$d; done
+
+build-linux: dash ## 构建 Linux amd64 与 arm64（tar.gz、deb 与 install.sh）
+	$(MYGO) build -platform linux/amd64,linux/arm64
 
 build-win: dash ## 构建 Windows amd64 单个 exe（不含安装包，NSIS 在 macOS 上做不了）
 	$(MYGO) build -platform windows/amd64 -skip-installer
