@@ -98,6 +98,16 @@ jobs:
       - name: Show files
         run: ls -lh dist
 
+      - name: Generate SHA256SUMS
+        working-directory: dist
+        run: |
+          for f in *; do
+            if [ -f "$f" ] && [ "$f" != SHA256SUMS ]; then
+              sha256sum "$f"
+            fi
+          done > SHA256SUMS
+          cat SHA256SUMS
+
       - name: Locate release notes
         id: notes
         run: |
