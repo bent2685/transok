@@ -44,6 +44,9 @@ jobs:
       - name: mygo build (darwin/universal)
         run: go tool mygo build -platform darwin/universal
 
+      - name: Add fix-damaged script to dmg
+        run: scripts/add-fix-script.sh dist/darwin-universal/*.dmg
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
