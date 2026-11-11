@@ -165,7 +165,7 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 
 func (a *App) filesHeader(c *ui.Context, p Palette) {
 	ui.Row(c).AlignItems(ui.Center).Children(func() {
-		ui.Row(c).Grow(1).Gap(6).AlignItems(ui.End).Children(func() {
+		ui.Row(c).Grow(1).Gap(6).AlignItems(ui.Baseline).Children(func() {
 			ui.Text(c, locales.HomeFileList()).FontSize(17).FontWeight(800)
 			if len(a.files) > 0 {
 				ui.Textf(c, "(%d)", len(a.files)).FontSize(15).FontWeight(800).TextColor(p.Accent)
