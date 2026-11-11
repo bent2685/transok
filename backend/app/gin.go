@@ -165,6 +165,10 @@ func (c *ginService) SetupRoutes() {
 	c.server.Use(middleware.Recover)
 	c.server.Use(middleware.LogHandler(common.GetBasePath()))
 
+	c.server.GET("/", func(ctx *gin.Context) {
+		ctx.Redirect(http.StatusFound, "/download/page/")
+	})
+
 	api := c.server.Group("/api")
 	{
 		api.GET("/ping", func(ctx *gin.Context) {

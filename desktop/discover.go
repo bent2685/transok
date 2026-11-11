@@ -104,7 +104,7 @@ func (a *App) allURLs(c *ui.Context) {
 func (a *App) shareURLs() []string {
 	urls := make([]string, 0, 3)
 	for _, ip := range services.System().GetLocalIps() {
-		urls = append(urls, fmt.Sprintf("http://%s:%s/download/page", ip, a.port))
+		urls = append(urls, fmt.Sprintf("http://%s:%s", ip, a.port))
 	}
 	return urls
 }
