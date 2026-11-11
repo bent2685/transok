@@ -112,7 +112,7 @@ gh run watch <run id> --exit-status
 gh release view v<版本> --json isDraft,body,assets --jq '{isDraft, assets: [.assets[].name]}'
 ```
 
-确认草稿里有：macOS 的 `.dmg` 和 `.tar.gz`、`update-darwin-universal.json`，Windows 的安装包、`.zip`/压缩包、`update-windows-amd64.json`。缺任何一项都不要发布，汇报给用户。齐全后让用户确认（或用户已授权）再发布：
+确认草稿里每个平台都有安装包、更新包（`.tar.gz`）和更新清单：macOS arm64 / amd64（`.dmg`、`update-darwin-arm64.json`、`update-darwin-amd64.json`）、Windows amd64（安装包、`update-windows-amd64.json`）、Linux amd64 / arm64（`.deb`、`update-linux-*.json`）。缺任何一项都不要发布，汇报给用户。齐全后让用户确认（或用户已授权）再发布：
 
 ```bash
 gh release edit v<版本> --draft=false

@@ -56,7 +56,7 @@ jobs:
           fi
 
   macos:
-    name: macOS universal
+    name: macOS arm64 + amd64
     needs: [read-version, draft-release]
     runs-on: macos-latest
     steps:
@@ -80,21 +80,63 @@ jobs:
       - name: Generate update changelog
         run: node scripts/release-notes.mjs --changelog
 
-      - name: mygo build (darwin/universal) and upload
+      # 过渡期（0.5.4）：0.5.3 是通用版，只会读 update-darwin-universal.json，所以这一版
+      # 额外构建 darwin/universal，仅为让它们能自动更新；通用版 dmg 不对外提供，下面删掉。
+      # 0.5.5 起去掉 darwin/universal 和删 dmg 的步骤。
+      - name: mygo build (darwin/arm64, darwin/amd64, darwin/universal) and upload
         env:
           GH_TOKEN: ${{ github.token }}
           MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
-        run: go tool mygo build -platform darwin/universal -upload
+        run: go tool mygo build -platform darwin/arm64,darwin/amd64,darwin/universal -upload
+
+      - name: Remove the transitional universal dmg
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.read-version.outputs.version }}
+        run: gh release delete-asset "v${VERSION}" "transok-${VERSION}.dmg" --yes
 
       # 修复脚本是构建后才塞进 dmg 的，mygo 上传的是不带它的版本，这里覆盖上传。
       # 更新走的是 tar.gz，不受 dmg 变化影响。
-      - name: Add fix-damaged script to dmg and re-upload
+      - name: Add fix-damaged script to dmgs and re-upload
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v${{ needs.read-version.outputs.version }}
         run: |
-          scripts/add-fix-script.sh dist/darwin-universal/*.dmg
-          gh release upload "$TAG" dist/darwin-universal/*.dmg --clobber
+          for dmg in dist/darwin-arm64/*.dmg dist/darwin-amd64/*.dmg; do
+            scripts/add-fix-script.sh "$dmg"
+            gh release upload "$TAG" "$dmg" --clobber
+          done
+
+  linux:
+    name: Linux amd64 + arm64
+    needs: [read-version, draft-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.3'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Build dash assets
+        run: bash scripts/build-dash.sh
+
+      - name: Generate update changelog
+        run: node scripts/release-notes.mjs --changelog
+
+      - name: mygo build (linux/amd64, linux/arm64) and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
+        run: go tool mygo build -platform linux/amd64,linux/arm64 -upload
 
   windows:
     name: Windows amd64
