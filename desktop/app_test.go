@@ -119,3 +119,25 @@ func TestPureTextCreatedOnlyOnConfirm(t *testing.T) {
 		t.Error("id is empty")
 	}
 }
+
+func TestCaptchaBackspaceClearsAllBoxes(t *testing.T) {
+	app := newTestApp()
+	app.captchaOpen = true
+	copy(app.captchaDigits, []string{"1", "2", "3", "4", "5"})
+	focused := false
+	tt := ui.NewTester(func(c *ui.Context) {
+		app.View(c)
+		if !focused {
+			focused = true
+			app.captchaInputs[captchaLength-1].Focus(c)
+		}
+	}, 380, 620)
+	tt.Frame()
+	for i := 0; i < captchaLength; i++ {
+		tt.Key(0, ui.KeyBackspace)
+		tt.Frame()
+	}
+	if got := joincode(app.captchaDigits); got != "" {
+		t.Errorf("digits %q after %d backspaces, want empty", app.captchaDigits, captchaLength)
+	}
+}
