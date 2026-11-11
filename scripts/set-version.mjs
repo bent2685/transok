@@ -6,6 +6,7 @@
 //
 // Usage:
 //   node scripts/set-version.mjs 0.4.9   # bump to 0.4.9 and sync
+//   node scripts/set-version.mjs patch   # patch | minor | major: bump from the current VERSION
 //   node scripts/set-version.mjs         # re-sync current VERSION to consumers
 //   node scripts/set-version.mjs --check # verify all locations match VERSION
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -27,6 +28,11 @@ else if (arg === '-h' || arg === '--help') {
 } else if (arg) {
   mode = 'set'
   newVersion = arg
+}
+
+if (mode === 'set' && /^(patch|minor|major)$/.test(newVersion)) {
+  const [maj, min, pat] = readFileSync(VERSION_FILE, 'utf8').trim().split('.').map(Number)
+  newVersion = { major: `${maj + 1}.0.0`, minor: `${maj}.${min + 1}.0`, patch: `${maj}.${min}.${pat + 1}` }[newVersion]
 }
 
 if (mode === 'set') {

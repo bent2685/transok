@@ -75,9 +75,10 @@ fmt: ## 检查 Go 格式（有输出即有文件需要 gofmt）
 check: fmt vet ## 提交前的全套检查：格式、vet、文案、版本一致、测试
 	$(MYGO) i18n check
 	node scripts/set-version.mjs --check
+	node --test scripts/*.test.mjs
 	CGO_ENABLED=0 go test ./...
 
-version: ## 改版本号并同步到各处：make version V=0.5.3（不带 V 则只同步）
+version: ## 改版本号并同步到各处：make version V=0.5.3 或 V=patch|minor|major（不带 V 则只同步）
 	node scripts/set-version.mjs $(V)
 
 clean: ## 删除构建产物（dist、.mygo），不动已提交的下载页产物

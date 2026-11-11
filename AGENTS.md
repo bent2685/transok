@@ -85,6 +85,20 @@ You need to communicate with the user in Chinese.
 
 ---
 
+## 发布说明（Release Notes，强制执行）
+
+**代码改完不等于任务完成，发布说明写完才算。**
+
+- 位置：`.github/release-notes/v<版本号>.md`，一个版本一个文件，版本号以根目录 `VERSION` 为准，文件不存在就 `node scripts/release-notes.mjs --new`。
+- 它同时是 **GitHub Release 的正文** 和 **应用内「发现新版本」窗口的更新日志**，写法见 `.github/release-notes/README.md`。
+- 触发条件：新增功能、修复缺陷、调整用户可感知的行为、合并 PR、关闭 issue。以上任一项完成后，**同一次任务内**把条目写进当前版本，不得留作后续。
+- 按 `## 新增` / `## 改进` / `## 修复` / `## 其他` 归类，没有内容的小节省略；站在用户视角写影响与代价，不要复述 diff 或罗列函数名；关联 PR/issue 用 `owner/repo#123`。无用户可感知影响的内部改动，也在「其他」留一句话。
+- 写之前先看状态：`node scripts/release-notes.mjs --status`。`released`（或没有标记）的版本**不能再改**，要停下问用户是否开下一个版本。
+- 发版、开下一个版本、改版本号一律走 `transok-release` skill。
+- 缺失发布说明会让 release 流水线在构建前直接失败。
+
+---
+
 ## Commit Guidelines
 
 ### Conventional Commits Style
