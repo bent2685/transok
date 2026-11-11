@@ -34,6 +34,9 @@ func (a *App) shareDrawer(c *ui.Context, p Palette) {
 				return
 			}
 			ui.Column(c).FillWidth().Gap(8).Children(func() {
+				if !a.share {
+					a.shareOffNotice(c, p)
+				}
 				for i, url := range urls {
 					a.shareURLRow(c, p, i, url)
 				}
@@ -47,6 +50,16 @@ func (a *App) shareDrawer(c *ui.Context, p Palette) {
 			})
 		},
 	})
+}
+
+// shareOffNotice 提醒分享服务还没开：此时列出的地址打不开。
+func (a *App) shareOffNotice(c *ui.Context, p Palette) {
+	ui.Row(c).FillWidth().Padding(10, 12).Gap(8).Radius(10).AlignItems(ui.Center).
+		Background(ui.RGBA(124, 126, 44, 0.12)).Border(1, ui.RGBA(124, 126, 44, 0.45)).
+		Children(func() {
+			ui.Icon(c, icon("info-circle")).FontSize(15).TextColor(p.Accent)
+			ui.Text(c, locales.ShareOffNotice()).Grow(1).FontSize(12).TextColor(p.Text)
+		})
 }
 
 func (a *App) shareURLRow(c *ui.Context, p Palette, i int, url string) {

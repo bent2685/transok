@@ -53,6 +53,7 @@
   "shareEmpty": "开始分享后这里会显示链接",
   "shareCopied": "已复制",
   "shareSeeAll": "查看全部",
+  "shareOffNotice": "分享服务未开启，开启分享后这些链接才能访问。",
   "shareQRTitle": "扫码打开",
   "shareQRDesc": "请确保对方与你在同一局域网",
   "selectDelete": "删除",

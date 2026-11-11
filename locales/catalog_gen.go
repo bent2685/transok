@@ -567,6 +567,16 @@ func (msgs Messages) ShareSeeAll() string {
 	return Catalog.Format(msgs.locale, "shareSeeAll", nil)
 }
 
+// ShareOffNotice says "Sharing is off. These links won't open until you start sharing."
+// in the language the app shows.
+func ShareOffNotice() string { return In(i18n.Locale()).ShareOffNotice() }
+
+// ShareOffNotice says "Sharing is off. These links won't open until you start sharing."
+// in the language of msgs.
+func (msgs Messages) ShareOffNotice() string {
+	return Catalog.Format(msgs.locale, "shareOffNotice", nil)
+}
+
 // ShareQRTitle says "Scan to Open"
 // in the language the app shows.
 func ShareQRTitle() string { return In(i18n.Locale()).ShareQRTitle() }
