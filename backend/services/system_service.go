@@ -255,7 +255,7 @@ var virtualInterfaceNames = []string{
 	"docker", "veth", "virtual", "vmware", "vmnet", "vbox", "virtualbox",
 	"vethernet", "hyper-v", "tailscale", "zerotier", "wireguard", "wintun",
 	"hamachi", "radmin", "loopback", "tun", "tap", "utun", "ppp", "ipsec",
-	"vpn", "awdl", "llw", "default switch",
+	"vpn", "awdl", "llw", "default switch", "bridge", "vmenet",
 }
 
 // isVirtualInterface reports whether the interface belongs to virtualization or

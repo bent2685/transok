@@ -25,8 +25,10 @@ func TestIsVirtualInterface(t *testing.T) {
 		{"vEthernet (Default Switch)", "00:15:5d:01:02:03", true}, // Hyper-V
 		{"VMware Network Adapter VMnet8", "00:50:56:c0:00:08", true},
 		{"VirtualBox Host-Only Network", "0a:00:27:00:00:00", true},
-		{"utun4", "", true},                  // macOS VPN tunnel
-		{"awdl0", "b6:d2:35:05:83:a0", true}, // Apple Wireless Direct Link
+		{"utun4", "", true},                      // macOS VPN tunnel
+		{"awdl0", "b6:d2:35:05:83:a0", true},     // Apple Wireless Direct Link
+		{"bridge100", "d2:11:e5:c1:45:64", true}, // macOS VM / container NAT bridge
+		{"vmenet0", "", true},                    // macOS virtual machine NIC
 		// Real LAN adapters that must be kept.
 		{"以太网", "a4:bb:6d:11:22:33", false},
 		{"WLAN", "a4:bb:6d:44:55:66", false},
