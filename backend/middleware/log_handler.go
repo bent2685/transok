@@ -12,7 +12,7 @@ import (
 )
 
 func LogHandler(basePath string) gin.HandlerFunc {
-	logPath := filepath.Join(basePath, "log")
+	logPath := filepath.Join(basePath, "logs")
 
 	// Create log directory
 	if err := os.MkdirAll(logPath, 0755); err != nil {
