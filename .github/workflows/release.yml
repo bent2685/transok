@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,9 +18,46 @@ jobs:
       - id: v
         run: echo "version=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_OUTPUT"
 
+      # tag 与 VERSION 不一致时，release 任务会把新产物挂到旧版本的 release 上且不报错，
+      # 所以在构建之前就拦住。
+      - name: Verify tag matches VERSION
+        run: |
+          ver="${{ steps.v.outputs.version }}"
+          if [ "${GITHUB_REF_NAME}" != "v${ver}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match VERSION (v${ver}). Run 'make version V=<x.y.z>' and commit before tagging."
+            exit 1
+          fi
+
+      - name: Verify version consistency
+        run: node scripts/set-version.mjs --check
+
+      # 发布说明同时是 Release 正文和应用内更新窗口的内容，缺失或写得不合格就别构建了。
+      - name: Verify release notes
+        run: node scripts/release-notes.mjs --check
+
+  # 构建前先建好草稿 Release（正文取自发布说明），各平台再往里传文件；
+  # 没有它，每个 mygo build -upload 会各建一个草稿。
+  draft-release:
+    needs: read-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create or refresh the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.read-version.outputs.version }}
+        run: |
+          notes=".github/release-notes/${TAG}.md"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release edit "$TAG" --notes-file "$notes"
+          else
+            gh release create "$TAG" --draft --verify-tag --title "$TAG" --notes-file "$notes"
+          fi
+
   macos:
     name: macOS universal
-    needs: read-version
+    needs: [read-version, draft-release]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,18 +77,28 @@ jobs:
       - name: Build dash assets
         run: bash scripts/build-dash.sh
 
-      - name: mygo build (darwin/universal)
-        run: go tool mygo build -platform darwin/universal
+      - name: Generate update changelog
+        run: node scripts/release-notes.mjs --changelog
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: transok-darwin
-          path: dist/darwin-universal/*
+      - name: mygo build (darwin/universal) and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
+        run: go tool mygo build -platform darwin/universal -upload
+
+      # 修复脚本是构建后才塞进 dmg 的，mygo 上传的是不带它的版本，这里覆盖上传。
+      # 更新走的是 tar.gz，不受 dmg 变化影响。
+      - name: Add fix-damaged script to dmg and re-upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.read-version.outputs.version }}
+        run: |
+          scripts/add-fix-script.sh dist/darwin-universal/*.dmg
+          gh release upload "$TAG" dist/darwin-universal/*.dmg --clobber
 
   windows:
     name: Windows amd64
-    needs: read-version
+    needs: [read-version, draft-release]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -73,57 +119,14 @@ jobs:
         shell: bash
         run: bash scripts/build-dash.sh
 
-      - name: mygo build (windows/amd64)
-        run: go tool mygo build -platform windows/amd64
+      - name: Generate update changelog
+        run: node scripts/release-notes.mjs --changelog
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: transok-windows
-          path: dist/windows-amd64/*
+      - name: mygo build (windows/amd64) and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
+        run: go tool mygo build -platform windows/amd64 -upload
 
-  release:
-    name: Attach to GitHub Release
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [read-version, macos, windows]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          merge-multiple: true
-
-      - name: Show files
-        run: ls -lh dist
-
-      - name: Generate SHA256SUMS
-        working-directory: dist
-        run: |
-          for f in *; do
-            if [ -f "$f" ] && [ "$f" != SHA256SUMS ]; then
-              sha256sum "$f"
-            fi
-          done > SHA256SUMS
-          cat SHA256SUMS
-
-      - name: Locate release notes
-        id: notes
-        run: |
-          ver="${{ needs.read-version.outputs.version }}"
-          notes="release/${ver}-release.md"
-          if [ ! -f "$notes" ]; then
-            echo "::error file=$notes::release notes not found. Create $notes before tagging v${ver}."
-            exit 1
-          fi
-          echo "path=$notes" >> "$GITHUB_OUTPUT"
-          echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
-
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.notes.outputs.tag }}
-          name: ${{ steps.notes.outputs.tag }}
-          body_path: ${{ steps.notes.outputs.path }}
-          files: dist/*
-          fail_on_unmatched_files: true
+# 草稿 Release 由人工检查后点 Publish；发布后应用才会收到更新。
+# 之后用 transok-release skill 把发布说明标为 released 并开下一个版本。

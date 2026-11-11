@@ -35,6 +35,7 @@ func (a *App) captchaDrawer(c *ui.Context, p Palette) {
 
 func (a *App) otpBoxes(c *ui.Context, p Palette) {
 	next := -1
+	prev := -1
 	ui.Row(c).Gap(12).Justify(ui.Center).Children(func() {
 		for i := 0; i < captchaLength; i++ {
 			box := ui.TextInput(c.Key("otp"+string(rune('0'+i))), &a.captchaDigits[i]).
@@ -47,11 +48,16 @@ func (a *App) otpBoxes(c *ui.Context, p Palette) {
 			if box.Changed() && a.captchaDigits[i] != "" {
 				next = i + 1
 			}
+			if box.Changed() && a.captchaDigits[i] == "" && i > 0 {
+				prev = i - 1
+			}
 		}
 	})
 	if a.focusReset {
 		a.focusReset = false
 		a.captchaInputs[0].Focus(c)
+	} else if prev >= 0 {
+		a.captchaInputs[prev].Focus(c)
 	} else if next > 0 && next < captchaLength {
 		a.captchaInputs[next].Focus(c)
 	}

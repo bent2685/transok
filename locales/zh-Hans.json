@@ -30,6 +30,7 @@
   "settingsDeviceName": "设备名称",
   "settingsAppName": "应用名称",
   "settingsVersion": "版本",
+  "settingsCheckUpdate": "检查更新",
   "settingsAuthor": "作者",
   "settingsEmail": "邮箱",
   "settingsFooter": "如果喜欢本应用请给我的仓库点个star",

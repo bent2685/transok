@@ -11,6 +11,7 @@ import (
 	"transok/desktop"
 
 	"github.com/egoist/mygo"
+	"github.com/egoist/mygo/plugins/updater/native"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -30,6 +31,8 @@ func main() {
 	/* Subscribe to mDNS messages */
 	mdns.GetDispatcher().Subscribe(mdns_handlers.GetDiscoverHandler())
 	mdns.GetDispatcher().Subscribe(mdns_handlers.NewPingHandler())
+
+	mygo.Use(native.Plugin)
 
 	application := desktop.New()
 
