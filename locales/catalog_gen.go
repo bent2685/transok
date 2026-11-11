@@ -337,16 +337,6 @@ func (msgs Messages) SettingsVersion() string {
 	return Catalog.Format(msgs.locale, "settingsVersion", nil)
 }
 
-// SettingsCheckUpdate says "Check for Updates"
-// in the language the app shows.
-func SettingsCheckUpdate() string { return In(i18n.Locale()).SettingsCheckUpdate() }
-
-// SettingsCheckUpdate says "Check for Updates"
-// in the language of msgs.
-func (msgs Messages) SettingsCheckUpdate() string {
-	return Catalog.Format(msgs.locale, "settingsCheckUpdate", nil)
-}
-
 // SettingsAuthor says "Author"
 // in the language the app shows.
 func SettingsAuthor() string { return In(i18n.Locale()).SettingsAuthor() }
