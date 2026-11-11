@@ -23,34 +23,15 @@
 
 ---
 
-# Features
-
-- [x] 文件上传功能
-- [x] 开启分享功能
-- [x] 文件删除和清空
-- [x] 文件下载页（下载端 Web 应用：`dash`）
-- [x] 深色模式
-- [x] 纯文字分享
-- [x] 文件夹分享（加入整个文件夹；被分享方可逐层浏览子目录、逐个下载文件或将当前目录打包为 zip）
-- [x] 文件夹内容动态更新（每次浏览实时读取，自动反映磁盘上的增删改）
-- [x] 在系统文件管理器中打开共享文件夹（Finder / 资源管理器 / 文件）
-- [x] 下载页图片缩略图预览
-- [x] 文件附加文本（为任意分享文件附加一段说明，下载页可见）
-- [x] 下载页详情弹窗，支持多行文本与图片预览
-- [x] 大文件可靠下载（Service Worker + HEAD/ETag + 256KB 流式 buffer）
-- [x] 分享项稳定 Id —— 列表顺序变化后详情/下载链接仍然可用
-- [x] i18n（en / zh-CN / zh-TW / ja）
-- [x] 自定义端口
-- [x] 文件加密分享（验证码下载校验）
-- [x] 查找局域网内正在共享的设备（zeroconf）
-- [ ] 在 Finder/资源管理器中右键添加
+桌面客户端已使用 [MyGo](https://github.com/egoist/mygo) 原生 UI 重构（Go 绘制，无 WebView）。
 
 ---
 
 # Preview
 
-![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview1.jpg)
-![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview2.jpg)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase1.png)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase2.png)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase3.png)
 
 ---
 

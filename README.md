@@ -24,34 +24,15 @@
 
 ---
 
-# Features
-
-- [x] File upload functionality
-- [x] Enable sharing feature
-- [x] File deletion and clearing
-- [x] File download page (download web app: `dash`)
-- [x] Dark mode
-- [x] Pure text sharing
-- [x] Folder sharing (add a whole folder; recipients browse subfolders, download files individually or the current directory as a zip)
-- [x] Live folder contents (read on each visit, auto-reflecting changes on disk)
-- [x] Reveal a shared folder in the system file manager (Finder / Explorer / Files)
-- [x] Image thumbnails on the download page
-- [x] Per-file additional note (attach a remark to any shared file, visible on the download page)
-- [x] Detail dialog on download page with multi-line text & image preview
-- [x] Resilient large-file downloads (Service Worker + HEAD/ETag + 256KB streaming)
-- [x] Stable per-item ID — detail/download links keep working after the share list is reordered
-- [x] i18n (en / zh-CN / zh-TW / ja)
-- [x] Custom port
-- [x] Encrypted file sharing (captcha-gated download)
-- [x] Discover sharing devices in the local network (zeroconf)
-- [ ] Right-click to add in Finder/File Explorer
+The desktop client has been rebuilt with [MyGo](https://github.com/egoist/mygo) native UI (Go-drawn, no WebView).
 
 ---
 
 # Preview
 
-![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview1.jpg)
-![preview](https://github.com/bent2685/transok/blob/main/readme_assets/preview2.jpg)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase1.png)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase2.png)
+![preview](https://github.com/bent2685/transok/blob/main/readme_assets/showcase3.png)
 
 ---
 
