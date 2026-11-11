@@ -2,7 +2,7 @@
   "name": "Transok",
   "slug": "transok",
   "identifier": "com.bent2685.transok",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "copyright": "Copyright © 2024 transok. All rights reserved.",
   "out": "dist",
   "i18n": {
@@ -13,5 +13,10 @@
     "webview": false,
     "maintainer": "bent2685 <bent2685@outlook.com>",
     "comment": "Efficient LAN file sharing"
+  },
+  "updates": {
+    "publicKey": "D0kC4R10GoLSfRZKPmUiuC5c7FO7Qa7f19sQlJ9bwa8=",
+    "github": "bent2685/transok",
+    "changelog": ".mygo/changelog.md"
   }
 }

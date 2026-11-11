@@ -6,6 +6,7 @@ import (
 
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/i18n"
+	"github.com/egoist/mygo/plugins/updater"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -35,6 +36,8 @@ func (a *App) settings(c *ui.Context) {
 			a.valueRow(c, p, "circle-dot", locales.SettingsAppName(), a.appInfo["name"])
 			divider(c, p)
 			a.valueRow(c, p, "info-circle", locales.SettingsVersion(), a.appInfo["version"])
+			divider(c, p)
+			a.updateRow(c, p)
 			divider(c, p)
 			a.valueRow(c, p, "user-circle", locales.SettingsAuthor(), a.appInfo["author"])
 			divider(c, p)
@@ -133,6 +136,15 @@ func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, wi
 		input.Border(1, p.Accent)
 	}
 	return input
+}
+
+// updateRow 手动检查更新，弹出的是 updater 插件的原生更新窗口。
+func (a *App) updateRow(c *ui.Context, p Palette) {
+	row := a.row(c, p, "refresh", locales.SettingsCheckUpdate(), func() {
+		ui.Icon(c, icon("chevron-right")).FontSize(14).TextColor(p.Muted)
+	})
+	row.Cursor(ui.CursorPointer).OnClick(updater.CheckForUpdates)
+	rowHover(row, p)
 }
 
 func (a *App) languageRow(c *ui.Context, p Palette) {
