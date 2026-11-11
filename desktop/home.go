@@ -142,11 +142,18 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 	// ButtonBase 是横向排布，里面再放一列，三个元素才能换行居中。
 	area.Children(func() {
 		ui.Column(c).Gap(8).Center().PassThrough().Children(func() {
-			// 液态玻璃按钮，按下由外层整块接住。
-			pill := ui.Row(c).Height(34).Padding(0, 16).Radius(11).PassThrough().
-				Material(glass.Glass{})
-			if hovered {
-				pill.Background(glassLift(p, 0.08))
+			// 深色用液态玻璃；浅色下玻璃与白底糊在一起，改成灰色实底。按下由外层整块接住。
+			pill := ui.Row(c).Height(34).Padding(0, 16).Radius(11).PassThrough()
+			switch {
+			case p.Dark:
+				pill.Material(glass.Glass{})
+				if hovered {
+					pill.Background(glassLift(p, 0.08))
+				}
+			case hovered:
+				pill.Background(p.Pressed)
+			default:
+				pill.Background(p.SurfaceHover)
 			}
 			pill.Children(func() {
 				ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
