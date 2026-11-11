@@ -61,6 +61,8 @@
   "shareEmpty": "Start sharing to get a link",
   "shareCopied": "Copied",
   "shareSeeAll": "View all",
+  "shareQRTitle": "Scan to Open",
+  "shareQRDesc": "The other device must be on the same network",
   "selectDelete": "Delete",
   "selectAll": "Select All",
   "selectNone": "Deselect All",

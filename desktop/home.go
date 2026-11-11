@@ -99,6 +99,7 @@ func (a *App) home(c *ui.Context) {
 	a.pureTextDrawer(c, p)
 	a.shareDrawer(c, p)
 	a.deleteDrawer(c, p)
+	a.qrDrawer(c, p)
 }
 
 func (a *App) homeHeader(c *ui.Context, p Palette) {

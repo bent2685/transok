@@ -53,6 +53,8 @@
   "shareEmpty": "共有を開始するとリンクが表示されます",
   "shareCopied": "コピーしました",
   "shareSeeAll": "すべて見る",
+  "shareQRTitle": "スキャンして開く",
+  "shareQRDesc": "相手の端末も同じネットワークに接続してください",
   "selectDelete": "削除",
   "selectAll": "すべて選択",
   "selectNone": "選択を解除",

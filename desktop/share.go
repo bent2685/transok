@@ -52,7 +52,15 @@ func (a *App) shareDrawer(c *ui.Context, p Palette) {
 func (a *App) shareURLRow(c *ui.Context, p Palette, i int, url string) {
 	copied := a.copiedRecently(c, url)
 
-	row := ui.ButtonBase(c).FillWidth().Padding(10, 12).Gap(10).Radius(10).
+	line := ui.Row(c).FillWidth().Gap(8).AlignItems(ui.Center)
+	line.Children(func() {
+		a.shareURLCopy(c, p, i, url, copied)
+		a.qrButton(c, p, url)
+	})
+}
+
+func (a *App) shareURLCopy(c *ui.Context, p Palette, i int, url string, copied bool) {
+	row := ui.ButtonBase(c).Grow(1).Padding(10, 12).Gap(10).Radius(10).
 		Background(p.Canvas).Border(1, p.Border).Cursor(ui.CursorPointer).
 		OnClick(func() { a.copyURL(url) })
 	if row.Hovered() || copied {

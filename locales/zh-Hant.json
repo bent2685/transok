@@ -53,6 +53,8 @@
   "shareEmpty": "開始分享後這裡會顯示連結",
   "shareCopied": "已複製",
   "shareSeeAll": "查看全部",
+  "shareQRTitle": "掃碼開啟",
+  "shareQRDesc": "請確保對方與你在同一區域網路",
   "selectDelete": "刪除",
   "selectAll": "全選",
   "selectNone": "取消全選",

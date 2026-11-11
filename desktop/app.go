@@ -50,6 +50,9 @@ type App struct {
 	deleteAsk  bool
 
 	shareOpen     bool
+	qrOpen        bool
+	qrURL         string
+	qrImage       *ui.Bitmap
 	captchaOpen   bool
 	captchaDigits []string
 	captchaInputs [captchaLength]ui.Handle

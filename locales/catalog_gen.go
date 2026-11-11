@@ -567,6 +567,26 @@ func (msgs Messages) ShareSeeAll() string {
 	return Catalog.Format(msgs.locale, "shareSeeAll", nil)
 }
 
+// ShareQRTitle says "Scan to Open"
+// in the language the app shows.
+func ShareQRTitle() string { return In(i18n.Locale()).ShareQRTitle() }
+
+// ShareQRTitle says "Scan to Open"
+// in the language of msgs.
+func (msgs Messages) ShareQRTitle() string {
+	return Catalog.Format(msgs.locale, "shareQRTitle", nil)
+}
+
+// ShareQRDesc says "The other device must be on the same network"
+// in the language the app shows.
+func ShareQRDesc() string { return In(i18n.Locale()).ShareQRDesc() }
+
+// ShareQRDesc says "The other device must be on the same network"
+// in the language of msgs.
+func (msgs Messages) ShareQRDesc() string {
+	return Catalog.Format(msgs.locale, "shareQRDesc", nil)
+}
+
 // SelectDelete says "Delete"
 // in the language the app shows.
 func SelectDelete() string { return In(i18n.Locale()).SelectDelete() }
