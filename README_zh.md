@@ -10,6 +10,7 @@
 ![ts][ts-badge]
 ![license][license-badge]
 ![download](https://img.shields.io/github/downloads/bent2685/transok/total)
+[![Listed on Awesome MyGo](https://awesomemygo.dev/badge.svg)](https://awesomemygo.dev/apps/transok)
 
 </div>
 

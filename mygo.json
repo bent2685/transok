@@ -2,7 +2,7 @@
   "name": "Transok",
   "slug": "transok",
   "identifier": "com.bent2685.transok",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "copyright": "Copyright © 2024 transok. All rights reserved.",
   "out": "dist",
   "i18n": {
