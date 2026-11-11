@@ -13,9 +13,14 @@
     "app:build": "go tool mygo build"
   },
   "devDependencies": {
-    "esbuild": "0.28.0"
+    "esbuild": "0.28.1"
   },
   "optionalDependencies": {
     "esbuild-linux-64": "^0.15.18"
+  },
+  "pnpm": {
+    "overrides": {
+      "minimatch@9.0.3": "^11.0.1"
+    }
   }
 }
