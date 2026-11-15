@@ -125,14 +125,11 @@ func (a *App) deviceRow(c *ui.Context, p Palette) {
 // controlWidth 是每行右侧操作区的统一宽度，三个控件对齐成一条竖线。
 const controlWidth float32 = 96
 
-// fieldInput 是行右侧那种小输入框，一眼能看出可以改。
+// fieldInput 是行右侧的无边框输入框，保留圆角底色。
 func (a *App) fieldInput(c *ui.Context, p Palette, key string, value *string, width float32) ui.Element {
 	input := ui.TextInput(c.Key(key), value).Width(width).Height(28).Radius(7).
 		FontSize(13).TextAlign(ui.End).Padding(0, 8).
-		Background(p.Canvas).Border(1, p.Border)
-	if input.Focused() {
-		input.Border(1, p.Accent)
-	}
+		Background(p.Canvas).BorderWidth(0)
 	return input
 }
 
@@ -151,7 +148,7 @@ func (a *App) languageRow(c *ui.Context, p Palette) {
 		sel := ui.SelectBase(c.Key("language"), &a.language)
 		sel.Trigger.Width(controlWidth).Height(30).Padding(0, 10).Radius(8).Gap(6).
 			AlignItems(ui.Center).Justify(ui.End).Background(p.Canvas).
-			Border(1, p.Border).Cursor(ui.CursorPointer)
+			BorderWidth(0).Cursor(ui.CursorPointer)
 		sel.Trigger.Children(func() {
 			ui.Text(c, i18n.Autonym(a.language)).FontSize(13).SingleLine()
 			ui.Icon(c, icon("chevron-down")).FontSize(14).TextColor(p.Muted)
