@@ -135,7 +135,7 @@ func (a *App) dropArea(c *ui.Context, p Palette) {
 	if hovered {
 		area.BorderColor(ui.RGBA(124, 126, 44, 0.45))
 	}
-	if area.FileDragOver() {
+	if c.Root().FileDragOver() {
 		area.BorderColor(p.Accent).Background(ui.RGBA(124, 126, 44, 0.10))
 	}
 
@@ -286,10 +286,7 @@ func (a *App) fileRow(c *ui.Context, p Palette, i int) {
 func (a *App) emptyList(c *ui.Context, p Palette) {
 	box := ui.Column(c).Grow(1).Center().Padding(0, 0, 40, 0)
 
-	if paths := box.DroppedFiles(); len(paths) > 0 {
-		a.addPaths(paths)
-	}
-	over := box.FileDragOver()
+	over := c.Root().FileDragOver()
 	tint := p.Muted
 	if over {
 		tint = p.Accent

@@ -111,14 +111,14 @@ func (a *App) View(c *ui.Context) {
 	a.syncLanguage()
 	c.SetTheme(Theme(PaletteFor(a.dark)))
 
-	// 根节点就是整个窗口的拖放目标：文件拖到窗口任何位置都算，不必拖进上传框。
-	root := ui.Column(c).Fill()
+	// 内容与 Overlay 共用窗口根节点，图标等覆盖层子元素也能沿祖先链找到拖放目标。
+	root := c.Root()
 	if paths := root.DroppedFiles(); len(paths) > 0 {
 		a.addPaths(paths)
 	}
 	dragging := root.FileDragOver()
 
-	root.Children(func() {
+	ui.Column(c).Fill().Children(func() {
 		// 顶部原本是系统标题栏的区域：整条都能拖动窗口，双击则缩放/最小化。
 		ui.Box(c).FillWidth().Height(a.titleBarStrip(c)).DragWindow()
 		ui.Column(c).Grow(1).Children(func() {
