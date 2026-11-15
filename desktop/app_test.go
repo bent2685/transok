@@ -141,3 +141,35 @@ func TestCaptchaBackspaceClearsAllBoxes(t *testing.T) {
 		t.Errorf("digits %q after %d backspaces, want empty", app.captchaDigits, captchaLength)
 	}
 }
+
+func TestWindowAcceptsFilesOverIcons(t *testing.T) {
+	for _, overlay := range []bool{false, true} {
+		name := "首页"
+		if overlay {
+			name = "拖拽浮层"
+		}
+		t.Run(name, func(t *testing.T) {
+			app := newTestApp()
+			tt := ui.NewTester(func(c *ui.Context) {
+				app.View(c)
+				if overlay {
+					app.dropGlow(c, true)
+				}
+			}, 380, 620)
+			// 不存在的路径不会写入分享清单，只验证拖放事件是否被窗口接住。
+			path := t.TempDir() + "/missing"
+			for _, point := range []ui.Point{
+				{X: 30, Y: 230},
+				{X: 190, Y: 294}, // 浮层中央的上传图标。
+				{X: 190, Y: 566}, // 底部的主要按钮图标。
+				{X: 190, Y: 130}, // 上传区。
+				{X: 190, Y: 350}, // 空列表。
+			} {
+				if !tt.DropFiles(point.X, point.Y, path) {
+					t.Errorf("窗口未接住 (%g, %g) 的文件拖放", point.X, point.Y)
+				}
+				tt.Frame()
+			}
+		})
+	}
+}
